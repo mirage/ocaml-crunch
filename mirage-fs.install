@@ -1,4 +1,4 @@
 bin: [
-  "_build/crunch/crunch.native" { "mir-crunch" }
+  "crunch/_build/crunch.native" { "mir-crunch" }
 ]
 
