@@ -1,0 +1,4 @@
+bin: [
+  "_build/crunch/crunch.native" { "mir-crunch" }
+]
+
