@@ -1,3 +1,6 @@
+PREFIX ?= /usr/local
+MAN ?= $(PREFIX)/share/man/man1
+
 .PHONY: all clean install build
 all: build test doc
 
@@ -15,7 +18,10 @@ doc: setup.data setup.bin
 	./setup.bin -doc
 
 install: setup.bin
-	./setup.bin -install
+	mkdir -p $(PREFIX)/bin
+	cp _build/crunch/crunch.native $(PREFIX)/bin/ocaml-crunch
+	mkdir -p $(MAN)
+	./_build/crunch/crunch.native --help=groff > $(MAN)/ocaml-crunch.1 || true
 
 test: setup.bin build
 	./setup.bin -test

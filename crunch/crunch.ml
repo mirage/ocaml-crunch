@@ -154,9 +154,9 @@ let _ =
   let output = Arg.(value & opt string "/dev/stdout" & info ["o";"output"] ~docv:"OUTPUT"
     ~doc:"Output file for the OCaml module.") in
   let mode = Arg.(value & opt (enum ["lwt",`Lwt]) `Lwt & info ["m";"mode"] ~docv:"MODE"
-    ~doc:"Interface access mode: currently only 'lwt' is supported.") in
+    ~doc:"Interface access mode: currently only 'lwt' is supported and is the default.") in
   let exts = Arg.(value & opt_all string [] & info ["e";"ext"] ~docv:"VALID EXTENSION" 
-    ~doc:"If specified, only these extensions will be included in the crunched output.") in
+    ~doc:"If specified, only these extensions will be included in the crunched output. If not specified, then all files will be crunched into the output module.") in
   let cmd_t = Term.(pure walker $ output $ mode $ dirs $ exts) in
   let info =
     let doc = "Convert a directory structure into a standalone `ramdisk` OCaml module that can serve the file contents without requiring an external filesystem to be present." in
