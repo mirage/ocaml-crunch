@@ -101,6 +101,11 @@ let output_footer oc =
   fprintf oc "let file_list = [";
   Hashtbl.iter (fun k _ -> fprintf oc "\"%s\"; " (String.escaped k)) file_info;
   fprintf oc " ]\n";
+  fprintf oc "let file_exists = function\n";
+  Hashtbl.iter (fun name _ ->
+    fprintf oc " |\"%s\" |\"/%s\" -> true\n" (String.escaped name) (String.escaped name)
+  ) file_info;
+  fprintf oc " |_ -> false\n";
   fprintf oc "let size = function\n";
   Hashtbl.iter (fun name size ->
     fprintf oc " |\"%s\" |\"/%s\" -> Some %dL\n" (String.escaped name) (String.escaped name) size
@@ -117,7 +122,7 @@ open Lwt
 exception Error of string
 
 let file_stream = Lwt_stream.of_list Internal.file_list
-
+let file_exists x = return (Internal.file_exists x)
 let size name = return (Internal.size name)
 
 let read name =
