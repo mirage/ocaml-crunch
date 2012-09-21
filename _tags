@@ -22,3 +22,4 @@
 "crunch/custom_unix_stubs.c": pkg_unix
 "crunch/custom_unix_stubs.c": pkg_cmdliner
 # OASIS_STOP
+true: annot
