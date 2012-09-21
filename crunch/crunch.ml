@@ -108,9 +108,35 @@ let output_footer oc =
   fprintf oc " |_ -> None\n\n";
   fprintf oc "end\n\n"
 
+let output_accessor oc =
+  function
+  |`Lwt ->
+    fprintf oc "
+open Lwt
+
+exception Error of string
+
+let file_stream = Lwt_stream.of_list Internal.file_list
+
+let size name = return (Internal.size name)
+
+let read name =
+  match Internal.file_chunks name with
+  |None -> return None
+  |Some c ->
+     let chunks = ref c in
+     return (Some (Lwt_stream.from (fun () ->
+       match !chunks with
+       |hd :: tl -> 
+         chunks := tl;
+         return (Some hd)
+       |[] -> return None
+     )))
+"
+
 open Cmdliner
 
-let walker output dirs exts =
+let walker output mode dirs exts =
   eprintf "output: %s\n%!" output;
   let dirs = List.map realpath dirs in
   eprintf "dirs: %s\n%!" (String.concat ", " dirs);
@@ -119,15 +145,19 @@ let walker output dirs exts =
   output_header oc;
   List.iter (walk_directory_tree exts (output_file oc)) dirs;
   output_footer oc;
+  output_accessor oc mode;
   close_out oc
 
 let _ =
-  let dirs = Arg.(non_empty & pos_all dir [] & info [] ~docv:"DIRECTORIES" ~doc:"Directories to crunch") in
+  let dirs = Arg.(non_empty & pos_all dir [] & info [] ~docv:"DIRECTORIES" 
+    ~doc:"Directories to recursively walk and crunch.") in
   let output = Arg.(value & opt string "/dev/stdout" & info ["o";"output"] ~docv:"OUTPUT"
-    ~doc:"Output file for the OCaml module") in
+    ~doc:"Output file for the OCaml module.") in
+  let mode = Arg.(value & opt (enum ["lwt",`Lwt]) `Lwt & info ["m";"mode"] ~docv:"MODE"
+    ~doc:"Interface access mode: currently only 'lwt' is supported.") in
   let exts = Arg.(value & opt_all string [] & info ["e";"ext"] ~docv:"VALID EXTENSION" 
-    ~doc:"If specified, only these extensions will be included in the crunched output") in
-  let cmd_t = Term.(pure walker $ output $ dirs $ exts) in
+    ~doc:"If specified, only these extensions will be included in the crunched output.") in
+  let cmd_t = Term.(pure walker $ output $ mode $ dirs $ exts) in
   let info =
     let doc = "Convert a directory structure into a standalone `ramdisk` OCaml module that can serve the file contents without requiring an external filesystem to be present." in
     let man = [ `S "BUGS"; `P "Email bug reports to <cl-mirage@lists.cl.cam.ac.uk>."] in
