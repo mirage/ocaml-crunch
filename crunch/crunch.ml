@@ -137,10 +137,7 @@ let read name =
 open Cmdliner
 
 let walker output mode dirs exts =
-  eprintf "output: %s\n%!" output;
   let dirs = List.map realpath dirs in
-  eprintf "dirs: %s\n%!" (String.concat ", " dirs);
-  eprintf "exts: %s\n%!" (String.concat ", " exts);
   let oc = open_out output in
   output_header oc;
   List.iter (walk_directory_tree exts (output_file oc)) dirs;
