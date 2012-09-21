@@ -1,0 +1,12 @@
+# OASIS_START
+# DO NOT EDIT (digest: 20d77594938e69721c7e27d43522ab37)
+version = "1.0.0"
+description = "Compile static files into an OCaml \"ramdisk\" module"
+requires = "unix cmdliner"
+archive(byte) = "crunch.cma"
+archive(byte, plugin) = "crunch.cma"
+archive(native) = "crunch.cmxa"
+archive(native, plugin) = "crunch.cmxs"
+exists_if = "crunch.cma"
+# OASIS_STOP
+

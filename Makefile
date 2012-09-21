@@ -18,6 +18,7 @@ doc: setup.data setup.bin
 	./setup.bin -doc
 
 install: setup.bin
+	./setup.bin -reinstall
 	mkdir -p $(PREFIX)/bin
 	cp _build/crunch/crunch.native $(PREFIX)/bin/ocaml-crunch
 	mkdir -p $(MAN)

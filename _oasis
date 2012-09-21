@@ -7,6 +7,12 @@ License:     ISC
 Plugins:     META (0.3)
 BuildTools:  ocamlbuild
 
+Library crunch
+  Path: crunch
+  Findlibname: crunch
+  Modules: Crunch
+  BuildDepends: unix, cmdliner
+
 Executable crunch
   Path:         crunch
   BuildTools:   ocamlbuild

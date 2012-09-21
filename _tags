@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 8acb03bd1fc9577d256b59b97f58d8ce)
+# DO NOT EDIT (digest: ed1fde9e4da5d1d0d4b4647b2b4ee006)
 # Ignore VCS directories, you can use the same kind of rule outside 
 # OASIS_START/STOP if you want to exclude directories that contains 
 # useless stuff for the build process
@@ -13,6 +13,8 @@
 ".git": not_hygienic
 "_darcs": -traverse
 "_darcs": not_hygienic
+# Library crunch
+"crunch/crunch.cmxs": use_crunch
 # Executable crunch
 <crunch/crunch.{native,byte}>: use_libcrunch_stubs
 <crunch/crunch.{native,byte}>: pkg_unix
