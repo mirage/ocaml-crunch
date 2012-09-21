@@ -1,12 +1,31 @@
-OCAMLBUILD ?= ocamlbuild
-PREFIX ?= /usr/local
+.PHONY: all clean install build
+all: build test doc
 
-all:
-	cd crunch && $(OCAMLBUILD) $(OCAMLBUILD_FLAGS) crunch.native
+setup.bin: setup.ml
+	ocamlopt.opt -o $@ $< || ocamlopt -o $@ $< || ocamlc -o $@ $<
+	rm -f setup.cmx setup.cmi setup.o setup.cmo
 
-install:
-	mkdir -p $(PREFIX)/bin
-	cp crunch/_build/crunch.native $(PREFIX)/bin/ocaml-crunch
+setup.data: setup.bin
+	./setup.bin -configure
+
+build: setup.data setup.bin
+	./setup.bin -build -classic-display
+
+doc: setup.data setup.bin
+	./setup.bin -doc
+
+install: setup.bin
+	./setup.bin -install
+
+test: setup.bin build
+	./setup.bin -test
+
+fulltest: setup.bin build
+	./setup.bin -test
+
+reinstall: setup.bin
+	./setup.bin -reinstall
 
 clean:
-	cd crunch && $(OCAMLBUILD) -clean
+	ocamlbuild -clean
+	rm -f setup.data setup.log setup.bin

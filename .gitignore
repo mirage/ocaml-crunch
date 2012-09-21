@@ -1,3 +1,5 @@
 _build/
-_config/
 *.native
+setup.bin
+setup.log
+setup.data

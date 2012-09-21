@@ -1,0 +1,16 @@
+OASISFormat: 0.3
+Name:        cstruct
+Version:     1.0.0
+Synopsis:    Compile static files into an OCaml "ramdisk" module
+Authors:     Anil Madhavapeddy
+License:     ISC
+Plugins:     META (0.3)
+BuildTools:  ocamlbuild
+
+Executable crunch
+  Path:         crunch
+  BuildTools:   ocamlbuild
+  MainIs:       crunch.ml
+  BuildDepends: unix, cmdliner
+  CSources:     custom_unix_stubs.c
+  CompiledObject: best

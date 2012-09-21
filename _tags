@@ -1,0 +1,24 @@
+# OASIS_START
+# DO NOT EDIT (digest: 8acb03bd1fc9577d256b59b97f58d8ce)
+# Ignore VCS directories, you can use the same kind of rule outside 
+# OASIS_START/STOP if you want to exclude directories that contains 
+# useless stuff for the build process
+<**/.svn>: -traverse
+<**/.svn>: not_hygienic
+".bzr": -traverse
+".bzr": not_hygienic
+".hg": -traverse
+".hg": not_hygienic
+".git": -traverse
+".git": not_hygienic
+"_darcs": -traverse
+"_darcs": not_hygienic
+# Executable crunch
+<crunch/crunch.{native,byte}>: use_libcrunch_stubs
+<crunch/crunch.{native,byte}>: pkg_unix
+<crunch/crunch.{native,byte}>: pkg_cmdliner
+<crunch/*.ml{,i}>: pkg_unix
+<crunch/*.ml{,i}>: pkg_cmdliner
+"crunch/custom_unix_stubs.c": pkg_unix
+"crunch/custom_unix_stubs.c": pkg_cmdliner
+# OASIS_STOP
