@@ -9,7 +9,7 @@ setup.bin: setup.ml
 	rm -f setup.cmx setup.cmi setup.o setup.cmo
 
 setup.data: setup.bin
-	./setup.bin -configure
+	./setup.bin -configure --prefix $(PREFIX)
 
 build: setup.data setup.bin
 	./setup.bin -build -classic-display
@@ -18,7 +18,8 @@ doc: setup.data setup.bin
 	./setup.bin -doc
 
 install: setup.bin
-	./setup.bin -reinstall
+	ocamlfind remove crunch || true
+	./setup.bin -install
 	mkdir -p $(PREFIX)/bin
 	cp _build/crunch/crunch.native $(PREFIX)/bin/ocaml-crunch
 	mkdir -p $(MAN)

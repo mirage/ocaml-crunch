@@ -1,6 +1,6 @@
 OASISFormat: 0.3
-Name:        cstruct
-Version:     1.0.0
+Name:        crunch
+Version:     1.0.1
 Synopsis:    Compile static files into an OCaml "ramdisk" module
 Authors:     Anil Madhavapeddy
 License:     ISC
@@ -20,3 +20,4 @@ Executable crunch
   BuildDepends: unix, cmdliner
   CSources:     custom_unix_stubs.c
   CompiledObject: best
+  Install:      false
