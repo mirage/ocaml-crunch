@@ -1,4 +1,4 @@
 bin: [
-  "crunch/_build/crunch.native" { "ocaml-crunch" }
+  "_build/crunch/crunch.native" { "ocaml-crunch" }
 ]
 
