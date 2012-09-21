@@ -6,4 +6,7 @@ all:
 
 install:
 	mkdir -p $(PREFIX)/bin
-	cp crunch/_build/crunch.native $(PREFIX)/bin/mir-crunch
+	cp crunch/_build/crunch.native $(PREFIX)/bin/ocaml-crunch
+
+clean:
+	cd crunch && $(OCAMLBUILD) -clean

@@ -1,0 +1,4 @@
+bin: [
+  "crunch/_build/crunch.native" { "ocaml-crunch" }
+]
+

@@ -1,5 +1,5 @@
 (*
- * Copyright (c) 2009-2011 Anil Madhavapeddy <anil@recoil.org>
+ * Copyright (c) 2009-2012 Anil Madhavapeddy <anil@recoil.org>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -38,15 +38,16 @@ let walk_directory_tree ?ext walkfn root_dir =
     let dh = opendir dir in
     repeat_until_eof (fun () ->
       match readdir dh with
-      | "." | ".." -> ()
-      | f ->
-          let n = Filename.concat dir f in
-          if Sys.is_directory n then walk n
-          else
-            (match (get_extension f), ext with
-            | (_, None) -> walkfn root_dir (String.sub n 2 (String.length n - 2))
-            | (Some e, Some e') when e = e'  -> walkfn root_dir (String.sub n 2 (String.length n - 2))
-            | _ -> ())
+      |"." |".." -> ()
+      |f ->
+       let n = Filename.concat dir f in
+       if Sys.is_directory n then walk n
+       else (match (get_extension f), ext with
+         |(_, None) -> 
+           walkfn root_dir (String.sub n 2 (String.length n - 2))
+         |(Some e, Some e') when e = e' -> 
+           walkfn root_dir (String.sub n 2 (String.length n - 2))
+         |_ -> ())
     );
     closedir dh in
   chdir root_dir;
@@ -99,62 +100,6 @@ let output_footer () =
   printf " |_ -> None\n\n";
   printf "end\n\n"
 
-let output_skeleton name =
-  printf "let name=\"%s\"\n" name;
-  let skeleton="
-open Lwt
-
-exception Error of string
-
-let iter_s fn = Lwt_list.iter_s fn Internal.file_list
-
-let size name = return (Internal.size name)
-
-let read name =
-  match Internal.file_chunks name with
-  |None -> return None
-  |Some c ->
-     let chunks = ref c in
-     return (Some (Lwt_stream.from (fun () ->
-       match !chunks with
-       |hd :: tl -> 
-         chunks := tl;
-         let pg = OS.Io_page.get () in
-         let len = String.length hd in
-         Cstruct.set_buffer hd 0 pg 0 len;
-         return (Some (Cstruct.sub pg 0 len))
-       |[] -> return None
-     )))
-
-let create vbd : OS.Devices.kv_ro Lwt.t =  
-  return (object
-    method iter_s fn = iter_s fn
-    method read name = read name
-    method size name = size name
-  end)
-
-let _ =
-  let plug = Lwt_mvar.create_empty () in
-  let unplug = Lwt_mvar.create_empty () in
-  let provider = object(self)
-    method id = name
-    method plug = plug
-    method unplug = unplug
-    method create ~deps ~cfg id =
-      Lwt.bind (create id) (fun kv ->
-        let entry = OS.Devices.({
-           provider=self;
-           id=self#id;
-           depends=[];
-           node=KV_RO kv }) in
-        return entry
-      )
-  end in
-  OS.Devices.new_provider provider;
-  OS.Main.at_enter (fun () -> Lwt_mvar.put plug {OS.Devices.p_id=name; p_dep_ids=[]; p_cfg=[]})
-" in
-  print_endline skeleton
-
 let _ =
   let dirs = ref [] in
   let ext = ref None in
@@ -166,7 +111,4 @@ let _ =
   let ext = !ext in
   output_header ();
   List.iter (walk_directory_tree ?ext output_file) !dirs;
-  output_footer ();
-  output_skeleton !name
-  
-
+  output_footer ()
