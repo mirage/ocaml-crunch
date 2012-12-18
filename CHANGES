@@ -1,7 +1,5 @@
-===== 1.0.1 (2012-09-21) =====
-
+1.0.1 (2012-09-21):
 * Build fix to respect the PREFIX environment.
 
-===== 1.0.0 (2012-09-21) =====
-
+1.0.0 (2012-09-21):
 * Initial public release.
