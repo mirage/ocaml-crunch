@@ -117,7 +117,7 @@ let read name =
        match !chunks with
        |hd :: tl -> 
          chunks := tl;
-         let pg = Cstruct.of_bigarray (OS.Io_page.get ()) in
+         let pg = Cstruct.of_bigarray (OS.Io_page.get 1) in
          let len = String.length hd in
          Cstruct.blit_from_string hd 0 pg 0 len;
          return (Some (Cstruct.sub pg 0 len))
