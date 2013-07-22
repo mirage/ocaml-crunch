@@ -99,14 +99,14 @@ let output_footer oc =
 
 let output_simple_skeleton oc name =
   fprintf oc "let name=\"%s\"\n" name;
-   let skeleton="
+  let skeleton="
 let file_list = Internal.file_list
 let size name = Internal.size name
 
 let read name =
   match Internal.file_chunks name with
   |None -> None
-  |Some c -> Some (String.concat "" c)
+  |Some c -> Some (String.concat \"\" c)
 " in
   output_string oc skeleton
 
