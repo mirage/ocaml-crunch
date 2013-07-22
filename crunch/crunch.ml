@@ -1,5 +1,5 @@
 (*
- * Copyright (c) 2009-2011 Anil Madhavapeddy <anil@recoil.org>
+ * Copyright (c) 2009-2013 Anil Madhavapeddy <anil@recoil.org>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,8 +19,8 @@ external realpath : string -> string = "unix_realpath"
 
 (* repeat until End_of_file is raised *)
 let repeat_until_eof fn =
-   try while true do fn () done
-   with End_of_file -> ()
+  try while true do fn () done
+  with End_of_file -> ()
 
 (* Retrieve file extension , if any, or blank string otherwise *)
 let get_extension ~filename =
@@ -35,17 +35,17 @@ let walk_directory_tree ?ext walkfn root_dir =
   let rec walk dir =
     let dh = Unix.opendir dir in
     repeat_until_eof (fun () ->
-      match Unix.readdir dh with
-      | "." | ".." -> ()
-      | f ->
+        match Unix.readdir dh with
+        | "." | ".." -> ()
+        | f ->
           let n = Filename.concat dir f in
           if Sys.is_directory n then walk n
           else
             (match (get_extension f), ext with
-            | (_, None) -> walkfn root_dir (String.sub n 2 (String.length n - 2))
-            | (Some e, Some e') when e = e'  -> walkfn root_dir (String.sub n 2 (String.length n - 2))
-            | _ -> ())
-    );
+             | (_, None) -> walkfn root_dir (String.sub n 2 (String.length n - 2))
+             | (Some e, Some e') when e = e'  -> walkfn root_dir (String.sub n 2 (String.length n - 2))
+             | _ -> ())
+      );
     Unix.closedir dh in
   Unix.chdir root_dir;
   walk "."
@@ -74,13 +74,13 @@ let output_file oc root name =
   (* Split the file as a series of chunks, of size up to 4096 (to simulate reading sectors) *)
   let sec = 4096 in (* sector size *)
   let rec consume idx =
-     if idx = size then fprintf oc "]\n"; (* EOF *)
-     if idx+sec < size then begin
-       fprintf oc "\"%s\";\n" (String.escaped (String.sub s idx sec));
-       consume (idx+sec);
-     end else begin (* final chunk, short *)
-       fprintf oc "\"%s\" ]\n" (String.escaped (String.sub s idx (size-idx)));
-     end
+    if idx = size then fprintf oc "]\n"; (* EOF *)
+    if idx+sec < size then begin
+      fprintf oc "\"%s\";\n" (String.escaped (String.sub s idx sec));
+      consume (idx+sec);
+    end else begin (* final chunk, short *)
+      fprintf oc "\"%s\" ]\n" (String.escaped (String.sub s idx (size-idx)));
+    end
   in
   consume 0
 
@@ -92,12 +92,25 @@ let output_footer oc =
   fprintf oc " ]\n";
   fprintf oc "let size = function\n";
   Hashtbl.iter (fun name size ->
-    fprintf oc " |\"%s\" |\"/%s\" -> Some %dL\n" (String.escaped name) (String.escaped name) size
-  ) file_info;
+      fprintf oc " |\"%s\" |\"/%s\" -> Some %dL\n" (String.escaped name) (String.escaped name) size
+    ) file_info;
   fprintf oc " |_ -> None\n\n";
   fprintf oc "end\n\n"
 
-let output_skeleton oc name =
+let output_simple_skeleton oc name =
+  fprintf oc "let name=\"%s\"\n" name;
+   let skeleton="
+let file_list = Internal.file_list
+let size name = Internal.size name
+
+let read name =
+  match Internal.file_chunks name with
+  |None -> None
+  |Some c -> Some (String.concat "" c)
+" in
+  output_string oc skeleton
+
+let output_lwt_skeleton oc name =
   fprintf oc "let name=\"%s\"\n" name;
   let skeleton="
 open Lwt
@@ -159,8 +172,10 @@ let _ =
   let ext = ref None in
   let name = ref "crunch" in
   let filename = ref None in
+  let nolwt = ref false in
   let spec = [("-ext", String (fun e -> ext := Some e), "filter only these extensions");
               "-name", Set_string name, "Name of the VBD";
+              "-nolwt", Set nolwt, "Output an Lwt-free version of the filesystem";
               "-o", String (fun f -> filename := Some f), "output in a file instead of stdout"
              ] in
   parse spec (fun s -> dirs := (realpath s) :: !dirs) 
@@ -170,6 +185,7 @@ let _ =
   output_header oc;
   List.iter (walk_directory_tree ?ext (output_file oc)) !dirs;
   output_footer oc;
-  output_skeleton oc !name
-  
-
+  if !nolwt then
+    output_simple_skeleton oc !name
+  else
+    output_lwt_skeleton oc !name

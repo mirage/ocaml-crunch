@@ -1,3 +1,7 @@
+0.7.0 (21-July-2013):
+* Add a `-nolwt` output mode which simply uses strings and has
+  no dependence on Lwt.  For the modern user who demands ultra-convenience.
+
 0.6.0 (09-July-2013):
 * Adapt output to mirage-platform-0.9.2 Io_page API.
 
