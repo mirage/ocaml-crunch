@@ -115,6 +115,15 @@ let output_footer oc =
 
 let output_accessor oc =
   function
+  |`Plain ->
+    fprintf oc "
+exception Error of string
+
+let file_stream = Internal.file_list
+let file_exists x = Internal.file_exists x
+let size name = Internal.size name
+let read name = Internal.file_chunks name
+"
   |`Lwt ->
     fprintf oc "
 open Lwt
@@ -155,8 +164,8 @@ let _ =
     ~doc:"Directories to recursively walk and crunch.") in
   let output = Arg.(value & opt string "/dev/stdout" & info ["o";"output"] ~docv:"OUTPUT"
     ~doc:"Output file for the OCaml module.") in
-  let mode = Arg.(value & opt (enum ["lwt",`Lwt]) `Lwt & info ["m";"mode"] ~docv:"MODE"
-    ~doc:"Interface access mode: currently only 'lwt' is supported and is the default.") in
+  let mode = Arg.(value & opt (enum [("plain",`Plain);("lwt",`Lwt)]) `Lwt & info ["m";"mode"] ~docv:"MODE"
+    ~doc:"Interface access mode: 'plain' or 'lwt' (default).") in
   let exts = Arg.(value & opt_all string [] & info ["e";"ext"] ~docv:"VALID EXTENSION" 
     ~doc:"If specified, only these extensions will be included in the crunched output. If not specified, then all files will be crunched into the output module.") in
   let cmd_t = Term.(pure walker $ output $ mode $ dirs $ exts) in
