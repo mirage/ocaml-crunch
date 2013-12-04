@@ -1,9 +1,8 @@
-OCAMLBUILD ?= ocamlbuild
-PREFIX ?= /usr/local
-
 all:
-	cd crunch && $(OCAMLBUILD) $(OCAMLBUILD_FLAGS) crunch.native
+	cd crunch && $(MAKE) all
+
+test:
+	cd crunch_test && $(MAKE)
 
 install:
-	mkdir -p $(PREFIX)/bin
-	cp crunch/_build/crunch.native $(PREFIX)/bin/mir-crunch
+	cd crunch && $(MAKE) install
