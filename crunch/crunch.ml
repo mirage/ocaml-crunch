@@ -97,95 +97,100 @@ let output_footer oc =
   fprintf oc " |_ -> None\n\n";
   fprintf oc "end\n\n"
 
-let output_simple_skeleton oc name =
-  fprintf oc "let name=\"%s\"\n" name;
-  let skeleton="
+let output_simple_skeleton oc =
+  output_string oc "
 let file_list = Internal.file_list
 let size name = Internal.size name
 
 let read name =
   match Internal.file_chunks name with
-  |None -> None
-  |Some c -> Some (String.concat \"\" c)
-" in
-  output_string oc skeleton
+  | None   -> None
+  | Some c -> Some (String.concat \"\" c)"
 
-let output_lwt_skeleton oc name =
-  fprintf oc "let name=\"%s\"\n" name;
-  let skeleton="
+let output_lwt_skeleton_ml oc =
+  fprintf oc "
 open Lwt
 
-exception Error of string
+type t = unit
 
-let iter_s fn = Lwt_list.iter_s fn Internal.file_list
+type error =
+  | Unknown_key of string
 
-let size name = return (Internal.size name)
+type id = unit
 
-let read name =
+type 'a io = 'a Lwt.t
+
+type page_aligned_stream = Cstruct.t Lwt_stream.t
+
+let size () name =
+  match Internal.size name with
+  | None   -> return (`Error (Unknown_key name))
+  | Some s -> return (`Ok s)
+
+let read () name =
   match Internal.file_chunks name with
-  |None -> return None
-  |Some c ->
+  | None   -> return (`Error (Unknown_key name))
+  | Some c ->
      let chunks = ref c in
-     return (Some (Lwt_stream.from (fun () ->
+     let get () =
        match !chunks with
-       |hd :: tl -> 
+       | hd :: tl ->
          chunks := tl;
-         let pg = Cstruct.of_bigarray (OS.Io_page.get 1) in
+         let pg = Cstruct.of_bigarray (Io_page.get 1) in
          let len = String.length hd in
          Cstruct.blit_from_string hd 0 pg 0 len;
          return (Some (Cstruct.sub pg 0 len))
-       |[] -> return None
-     )))
+       | [] -> return None
+     in
+     return (`Ok (Lwt_stream.from get))
 
-let create vbd : OS.Devices.kv_ro Lwt.t =  
-  return (object
-    method iter_s fn = iter_s fn
-    method read name = read name
-    method size name = size name
-  end)
+let return_ok = return (`Ok ())
 
-let _ =
-  let plug = Lwt_mvar.create_empty () in
-  let unplug = Lwt_mvar.create_empty () in
-  let provider = object(self)
-    method id = name
-    method plug = plug
-    method unplug = unplug
-    method create ~deps ~cfg id =
-      Lwt.bind (create id) (fun kv ->
-        let entry = OS.Devices.({
-           provider=self;
-           id=self#id;
-           depends=[];
-           node=KV_RO kv }) in
-        return entry
-      )
-  end in
-  OS.Devices.new_provider provider;
-  OS.Main.at_enter (fun () -> Lwt_mvar.put plug {OS.Devices.p_id=name; p_dep_ids=[]; p_cfg=[]})
+let connect () = return_ok
 
-" in
-  output_string oc skeleton
+let disconnect () = return_unit
+"
+
+let output_lwt_skeleton_mli oc =
+  fprintf oc "
+include V1.KV_RO
+  with type id = unit
+   and type 'a io = 'a Lwt.t
+   and type page_aligned_stream = Cstruct.t Lwt_stream.t"
 
 let _ =
   let dirs = ref [] in
   let ext = ref None in
-  let name = ref "crunch" in
   let filename = ref None in
   let nolwt = ref false in
   let spec = [("-ext", String (fun e -> ext := Some e), "filter only these extensions");
-              "-name", Set_string name, "Name of the VBD";
               "-nolwt", Set nolwt, "Output an Lwt-free version of the filesystem";
               "-o", String (fun f -> filename := Some f), "output in a file instead of stdout"
              ] in
-  parse spec (fun s -> dirs := (realpath s) :: !dirs) 
+  parse spec (fun s -> dirs := (realpath s) :: !dirs)
     (sprintf "Usage: %s [-ext <filter extension>] [-o filename] <dir1> <dir2> ..." Sys.argv.(0));
   let ext = !ext in
-  let oc = match !filename with None -> stdout | Some f -> open_out f in
+  let oc = match !filename with
+    | None   -> stdout
+    | Some f ->
+      printf "Generating %s\n%!" f;
+      open_out f in
+  let cwd = Sys.getcwd () in
   output_header oc;
   List.iter (walk_directory_tree ?ext (output_file oc)) !dirs;
   output_footer oc;
   if !nolwt then
-    output_simple_skeleton oc !name
+    output_simple_skeleton oc
   else
-    output_lwt_skeleton oc !name
+    output_lwt_skeleton_ml oc;
+  close_out oc;
+  match !filename with
+  | Some f when Filename.check_suffix f ".ml" && not !nolwt ->
+    let mli = (Filename.chop_extension f) ^ ".mli" in
+    printf "Generating %s\n%!" mli;
+    Sys.chdir cwd;
+    let oc = open_out mli in
+    output_lwt_skeleton_mli oc;
+    close_out oc
+  | Some _ -> printf "Skipping generation of .mli\n%!"
+  | None   -> ()
