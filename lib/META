@@ -1,0 +1,12 @@
+# OASIS_START
+# DO NOT EDIT (digest: 30a50ddf5848ceef70004fceab77614e)
+version = "1.0.1"
+description = "Compile static files into a static filesystem"
+requires = "unix"
+archive(byte) = "crunch.cma"
+archive(byte, plugin) = "crunch.cma"
+archive(native) = "crunch.cmxa"
+archive(native, plugin) = "crunch.cmxs"
+exists_if = "crunch.cma"
+# OASIS_STOP
+

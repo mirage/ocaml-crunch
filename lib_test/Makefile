@@ -1,4 +1,4 @@
-CRUNCH = ../crunch/_build/crunch.native
+CRUNCH = ../main.native
 PKGS   = cstruct,lwt,mirage-types,io-page-unix
 
 all:
@@ -6,4 +6,5 @@ all:
 	ocamlfind ocamlopt -package $(PKGS) -c t1.mli t1.ml
 
 clean:
-	rm -rf t1.ml t1.mli
+	rm -rf t1.ml t1.mli t1.cmx t1.cmi t1.cmo t1.o
+	rm -rf *~

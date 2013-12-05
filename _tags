@@ -1,0 +1,30 @@
+# OASIS_START
+# DO NOT EDIT (digest: 97b07a355dd25f75331d7e850356e430)
+# Ignore VCS directories, you can use the same kind of rule outside 
+# OASIS_START/STOP if you want to exclude directories that contains 
+# useless stuff for the build process
+<**/.svn>: -traverse
+<**/.svn>: not_hygienic
+".bzr": -traverse
+".bzr": not_hygienic
+".hg": -traverse
+".hg": not_hygienic
+".git": -traverse
+".git": not_hygienic
+"_darcs": -traverse
+"_darcs": not_hygienic
+# Library crunch
+"lib/crunch.cmxs": use_crunch
+# Executable mir-crunch
+<lib/main.{native,byte}>: use_libmir-crunch_stubs
+<lib/main.{native,byte}>: use_crunch
+<lib/main.{native,byte}>: pkg_unix
+<lib/main.{native,byte}>: pkg_cmdliner
+<lib/*.ml{,i}>: use_crunch
+<lib/*.ml{,i}>: pkg_unix
+<lib/*.ml{,i}>: pkg_cmdliner
+"lib/custom_unix_stubs.c": use_crunch
+"lib/custom_unix_stubs.c": pkg_unix
+"lib/custom_unix_stubs.c": pkg_cmdliner
+<lib/main.{native,byte}>: custom
+# OASIS_STOP

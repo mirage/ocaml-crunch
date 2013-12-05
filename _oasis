@@ -1,0 +1,28 @@
+OASISFormat: 0.3
+Name:        crunch
+Version:     1.0.1
+Synopsis:    Compile static files into a static filesystem
+Authors:     Anil Madhavapeddy, Thomas Gazagnaire
+License:     ISC
+Plugins:     META (0.3), DevFiles (0.3)
+BuildTools:  ocamlbuild
+
+Library crunch
+  CompiledObject:     best
+  Path:               lib
+  Findlibname:        crunch
+  Modules:            Crunch
+  BuildDepends:       unix
+
+Executable "mir-crunch"
+  MainIs:             main.ml
+  CompiledObject:     best
+  Path:               lib
+  Custom:             true
+  CSources:           custom_unix_stubs.c
+  Install:            true
+  BuildDepends:       crunch,unix,cmdliner
+
+Test test
+  Command:            make -C lib_test/
+  Run:                true
