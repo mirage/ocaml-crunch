@@ -1,6 +1,6 @@
 OASISFormat: 0.3
 Name:        crunch
-Version:     1.0.1
+Version:     1.1.0
 Synopsis:    Compile static files into a static filesystem
 Authors:     Anil Madhavapeddy, Thomas Gazagnaire
 License:     ISC
