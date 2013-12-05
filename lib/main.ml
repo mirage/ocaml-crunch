@@ -35,7 +35,7 @@ let walker output mode dirs exts =
   Crunch.output_footer oc;
   begin match mode with
     | `Lwt   -> Crunch.output_lwt_skeleton_ml oc
-    | `NoLwt -> Crunch.output_simple_skeleton oc
+    | `Plain -> Crunch.output_plain_skeleton_ml oc
   end;
   close_out oc;
   match output with
@@ -55,7 +55,7 @@ let () =
     ~doc:"Directories to recursively walk and crunch.") in
   let output = Arg.(value & opt (some string) None & info ["o";"output"] ~docv:"OUTPUT"
     ~doc:"Output file for the OCaml module.") in
-  let mode = Arg.(value & opt (enum ["lwt",`Lwt; "no-lwt",`NoLwt]) `Lwt & info ["m";"mode"] ~docv:"MODE"
+  let mode = Arg.(value & opt (enum ["lwt",`Lwt; "plain",`Plain]) `Lwt & info ["m";"mode"] ~docv:"MODE"
     ~doc:"Interface access mode: 'lwt' is the default.") in
   let exts = Arg.(value & opt_all string [] & info ["e";"ext"] ~docv:"VALID EXTENSION"
     ~doc:"If specified, only these extensions will be included in the crunched output. If not specified, then all files will be crunched into the output module.") in

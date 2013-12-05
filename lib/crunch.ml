@@ -118,7 +118,7 @@ let output_footer oc =
   fprintf oc " |_ -> None\n\n";
   fprintf oc "end\n\n"
 
-let output_simple_skeleton oc =
+let output_plain_skeleton_ml oc =
   output_string oc "
 let file_list = Internal.file_list
 let size name = Internal.size name
