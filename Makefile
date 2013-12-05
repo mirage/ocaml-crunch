@@ -1,39 +1,38 @@
-PREFIX ?= /usr/local
-MAN ?= $(PREFIX)/share/man/man1
+# OASIS_START
+# DO NOT EDIT (digest: bc1e05bfc8b39b664f29dae8dbd3ebbb)
 
-.PHONY: all clean install build
-all: build test doc
+SETUP = ocaml setup.ml
 
-setup.bin: setup.ml
-	ocamlopt.opt -o $@ $< || ocamlopt -o $@ $< || ocamlc -o $@ $<
-	rm -f setup.cmx setup.cmi setup.o setup.cmo
+build: setup.data
+	$(SETUP) -build $(BUILDFLAGS)
 
-setup.data: setup.bin
-	./setup.bin -configure --prefix $(PREFIX)
+doc: setup.data build
+	$(SETUP) -doc $(DOCFLAGS)
 
-build: setup.data setup.bin
-	./setup.bin -build -classic-display
+test: setup.data build
+	$(SETUP) -test $(TESTFLAGS)
 
-doc: setup.data setup.bin
-	./setup.bin -doc
+all: 
+	$(SETUP) -all $(ALLFLAGS)
 
-install: setup.bin
-	ocamlfind remove crunch || true
-	./setup.bin -install
-	mkdir -p $(PREFIX)/bin
-	cp _build/crunch/crunch.native $(PREFIX)/bin/ocaml-crunch
-	mkdir -p $(MAN)
-	./_build/crunch/crunch.native --help=groff > $(MAN)/ocaml-crunch.1 || true
+install: setup.data
+	$(SETUP) -install $(INSTALLFLAGS)
 
-test: setup.bin build
-	./setup.bin -test
+uninstall: setup.data
+	$(SETUP) -uninstall $(UNINSTALLFLAGS)
 
-fulltest: setup.bin build
-	./setup.bin -test
+reinstall: setup.data
+	$(SETUP) -reinstall $(REINSTALLFLAGS)
 
-reinstall: setup.bin
-	./setup.bin -reinstall
+clean: 
+	$(SETUP) -clean $(CLEANFLAGS)
 
-clean:
-	ocamlbuild -clean
-	rm -f setup.data setup.log setup.bin
+distclean: 
+	$(SETUP) -distclean $(DISTCLEANFLAGS)
+
+setup.data:
+	$(SETUP) -configure $(CONFIGUREFLAGS)
+
+.PHONY: build doc test all install uninstall reinstall clean distclean configure
+
+# OASIS_STOP

@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: ed1fde9e4da5d1d0d4b4647b2b4ee006)
+# DO NOT EDIT (digest: 97b07a355dd25f75331d7e850356e430)
 # Ignore VCS directories, you can use the same kind of rule outside 
 # OASIS_START/STOP if you want to exclude directories that contains 
 # useless stuff for the build process
@@ -14,14 +14,17 @@
 "_darcs": -traverse
 "_darcs": not_hygienic
 # Library crunch
-"crunch/crunch.cmxs": use_crunch
-# Executable crunch
-<crunch/crunch.{native,byte}>: use_libcrunch_stubs
-<crunch/crunch.{native,byte}>: pkg_unix
-<crunch/crunch.{native,byte}>: pkg_cmdliner
-<crunch/*.ml{,i}>: pkg_unix
-<crunch/*.ml{,i}>: pkg_cmdliner
-"crunch/custom_unix_stubs.c": pkg_unix
-"crunch/custom_unix_stubs.c": pkg_cmdliner
+"lib/crunch.cmxs": use_crunch
+# Executable mir-crunch
+<lib/main.{native,byte}>: use_libmir-crunch_stubs
+<lib/main.{native,byte}>: use_crunch
+<lib/main.{native,byte}>: pkg_unix
+<lib/main.{native,byte}>: pkg_cmdliner
+<lib/*.ml{,i}>: use_crunch
+<lib/*.ml{,i}>: pkg_unix
+<lib/*.ml{,i}>: pkg_cmdliner
+"lib/custom_unix_stubs.c": use_crunch
+"lib/custom_unix_stubs.c": pkg_unix
+"lib/custom_unix_stubs.c": pkg_cmdliner
+<lib/main.{native,byte}>: custom
 # OASIS_STOP
-true: annot

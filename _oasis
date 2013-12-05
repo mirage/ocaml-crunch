@@ -1,23 +1,28 @@
 OASISFormat: 0.3
 Name:        crunch
-Version:     1.0.1
-Synopsis:    Compile static files into an OCaml "ramdisk" module
-Authors:     Anil Madhavapeddy
+Version:     1.1.0
+Synopsis:    Compile static files into a static filesystem
+Authors:     Anil Madhavapeddy, Thomas Gazagnaire
 License:     ISC
-Plugins:     META (0.3)
+Plugins:     META (0.3), DevFiles (0.3)
 BuildTools:  ocamlbuild
 
 Library crunch
-  Path: crunch
-  Findlibname: crunch
-  Modules: Crunch
-  BuildDepends: unix, cmdliner
+  CompiledObject:     best
+  Path:               lib
+  Findlibname:        crunch
+  Modules:            Crunch
+  BuildDepends:       unix
 
-Executable crunch
-  Path:         crunch
-  BuildTools:   ocamlbuild
-  MainIs:       crunch.ml
-  BuildDepends: unix, cmdliner
-  CSources:     custom_unix_stubs.c
-  CompiledObject: best
-  Install:      false
+Executable "mir-crunch"
+  MainIs:             main.ml
+  CompiledObject:     best
+  Path:               lib
+  Custom:             true
+  CSources:           custom_unix_stubs.c
+  Install:            true
+  BuildDepends:       crunch,unix,cmdliner
+
+Test test
+  Command:            make -C lib_test/
+  Run:                true
