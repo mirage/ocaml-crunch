@@ -36,7 +36,7 @@ val output_lwt_skeleton_ml: out_channel -> unit
 val output_lwt_skeleton_mli: out_channel -> unit
 (** Output the Lwt helpers. *)
 
-val output_simple_skeleton: out_channel -> unit
+val output_plain_skeleton_ml: out_channel -> unit
 (** Output a simple skeleton. *)
 
 val walk_directory_tree: string list -> (string -> string -> unit) -> string -> unit
