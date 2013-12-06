@@ -56,13 +56,13 @@ let () =
   let output = Arg.(value & opt (some string) None & info ["o";"output"] ~docv:"OUTPUT"
     ~doc:"Output file for the OCaml module.") in
   let mode = Arg.(value & opt (enum ["lwt",`Lwt; "plain",`Plain]) `Lwt & info ["m";"mode"] ~docv:"MODE"
-    ~doc:"Interface access mode: 'lwt' is the default.") in
+    ~doc:"Interface access mode: 'lwt' or 'plain'. 'lwt' is the default.") in
   let exts = Arg.(value & opt_all string [] & info ["e";"ext"] ~docv:"VALID EXTENSION"
     ~doc:"If specified, only these extensions will be included in the crunched output. If not specified, then all files will be crunched into the output module.") in
   let cmd_t = Term.(pure walker $ output $ mode $ dirs $ exts) in
   let info =
-    let doc = "Convert a directory structure into a standalone `ramdisk` OCaml module that can serve the file contents without requiring an external filesystem to be present." in
-    let man = [ `S "BUGS"; `P "Email bug reports to <cl-mirage@lists.cl.cam.ac.uk>."] in
-    Term.info "ocaml-crunch" ~version:"1.0.0" ~doc ~man
+    let doc = "Convert a directory structure into a standalone OCaml module that can serve the file contents without requiring an external filesystem to be present." in
+    let man = [ `S "BUGS"; `P "Email bug reports to <mirage-devel@lists.xenproject.org>."] in
+    Term.info "ocaml-crunch" ~version:"1.1.0" ~doc ~man
   in
   match Term.eval (cmd_t, info) with `Ok x -> x | _ -> exit 1
