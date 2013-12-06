@@ -14,7 +14,7 @@ Library crunch
   Modules:            Crunch
   BuildDepends:       unix
 
-Executable "mir-crunch"
+Executable "ocaml-crunch"
   MainIs:             main.ml
   CompiledObject:     best
   Path:               lib

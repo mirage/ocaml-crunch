@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 42652eb6a5ce2b0c36164460e24c4417) *)
+(* DO NOT EDIT (digest: ff1b69ba05de92bfa9ab155ab404ad5c) *)
 module OASISGettext = struct
 (* # 21 "src/oasis/OASISGettext.ml" *)
 
@@ -478,7 +478,7 @@ open Ocamlbuild_plugin;;
 let package_default =
   {
      MyOCamlbuildBase.lib_ocaml = [("crunch", ["lib"])];
-     lib_c = [("mir-crunch", "lib", [])];
+     lib_c = [("ocaml-crunch", "lib", [])];
      flags = [];
      includes = [];
      }
