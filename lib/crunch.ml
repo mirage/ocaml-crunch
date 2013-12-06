@@ -143,29 +143,50 @@ type id = unit
 
 type 'a io = 'a Lwt.t
 
-type page_aligned_stream = Cstruct.t Lwt_stream.t
+type page_aligned_buffer = Cstruct.t
 
 let size () name =
   match Internal.size name with
   | None   -> return (`Error (Unknown_key name))
   | Some s -> return (`Ok s)
 
-let read () name =
+let filter_blocks offset len blocks =
+  List.rev (fst (List.fold_left (fun (acc, (offset, offset', len)) c ->
+    let len' = String.length c in
+    let acc, consumed =
+      if len = 0
+      then acc, 0
+      (* This is before the requested data *)
+      else if offset' + len' < offset
+      then acc, 0
+      (* This is after the requested data *)
+      else if offset + len < offset'
+      then acc, 0
+      (* Overlapping: we're inside the region but extend beyond it *)
+      else if offset <= offset' && (offset' + len') >= (offset + len)
+      then String.sub c (offset' - offset) len :: acc, len
+      (* Overlapping: we're outside the region but extend into it *)
+      else if offset' <= offset
+      then String.sub c (offset - offset') (len' - offset + offset') :: acc, (len' - offset + offset')
+      (* We're completely inside the region *)
+      else c :: acc, len' in
+    let offset' = offset' + len' in
+    let offset = offset + consumed in
+    let len = len - consumed in
+    acc, (offset, offset', len)
+  ) ([], (offset, 0, len)) blocks))
+
+let read () name offset len =
   match Internal.file_chunks name with
   | None   -> return (`Error (Unknown_key name))
   | Some c ->
-     let chunks = ref c in
-     let get () =
-       match !chunks with
-       | hd :: tl ->
-         chunks := tl;
-         let pg = Cstruct.of_bigarray (Io_page.get 1) in
-         let len = String.length hd in
-         Cstruct.blit_from_string hd 0 pg 0 len;
-         return (Some (Cstruct.sub pg 0 len))
-       | [] -> return None
-     in
-     return (`Ok (Lwt_stream.from get))
+    let bufs = List.map (fun buf ->
+      let pg = Io_page.to_cstruct (Io_page.get 1) in
+      let len = String.length buf in
+      Cstruct.blit_from_string buf 0 pg 0 len;
+      Cstruct.sub pg 0 len
+    ) (filter_blocks offset len c) in
+    return (`Ok bufs)
 
 let return_ok = return (`Ok ())
 
