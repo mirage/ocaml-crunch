@@ -40,18 +40,18 @@ let walk_directory_tree exts walkfn root_dir =
   let rec walk dir =
     let dh = Unix.opendir dir in
     repeat_until_eof (fun () ->
-      match Unix.readdir dh with
-      | "." |".." -> ()
-      | f ->
-        let n = Filename.concat dir f in
-        if Sys.is_directory n then walk n
-        else begin
-          match get_extension ~file:f with
-          |None -> ()
-          |Some e ->
-            if filter_ext e then
-              walkfn root_dir (String.sub n 2 (String.length n - 2))
-        end
+        match Unix.readdir dh with
+        | "." |".." -> ()
+        | f ->
+          let n = Filename.concat dir f in
+          if Sys.is_directory n then walk n
+          else begin
+            match get_extension ~file:f with
+            |None -> ()
+            |Some e ->
+              if filter_ext e then
+                walkfn root_dir (String.sub n 2 (String.length n - 2))
+          end
       );
     Unix.closedir dh in
   Unix.chdir root_dir;
