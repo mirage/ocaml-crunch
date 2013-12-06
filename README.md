@@ -7,9 +7,9 @@ Run `man ocaml-crunch` or `ocaml-crunch --help` for more information:
 
 ```
 NAME
-       ocaml-crunch - Convert a directory structure into a standalone
-       `ramdisk` OCaml module that can serve the file contents without
-       requiring an external filesystem to be present.
+       ocaml-crunch - Convert a directory structure into a standalone OCaml
+       module that can serve the file contents without requiring an external
+       filesystem to be present.
 
 SYNOPSIS
        ocaml-crunch [OPTION]... DIRECTORIES...
@@ -28,15 +28,14 @@ OPTIONS
            Show this help in format FMT (pager, plain or groff).
 
        -m MODE, --mode=MODE (absent=lwt)
-           Interface access mode: currently only 'lwt' is supported and is the
-           default.
+           Interface access mode: 'lwt' or 'plain'. 'lwt' is the default.
 
-       -o OUTPUT, --output=OUTPUT (absent=/dev/stdout)
+       -o OUTPUT, --output=OUTPUT
            Output file for the OCaml module.
 
        --version
            Show version information.
 
 BUGS
-       Email bug reports to <cl-mirage@lists.cl.cam.ac.uk>.
+       Email bug reports to <mirage-devel@lists.xenproject.org>.
 ```
