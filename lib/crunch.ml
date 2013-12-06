@@ -46,11 +46,13 @@ let walk_directory_tree exts walkfn root_dir =
           let n = Filename.concat dir f in
           if Sys.is_directory n then walk n
           else begin
+            let traverse () =
+              walkfn root_dir (String.sub n 2 (String.length n - 2))
+            in
             match get_extension ~file:f with
-            |None -> ()
-            |Some e ->
-              if filter_ext e then
-                walkfn root_dir (String.sub n 2 (String.length n - 2))
+            | None -> traverse ()
+            | Some e when filter_ext e -> traverse ()
+            | Some _ -> ()
           end
       );
     Unix.closedir dh in
