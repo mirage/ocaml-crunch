@@ -1,3 +1,6 @@
+1.1.2 (2013-12-07)
+* Do not skip files without an extension.
+
 1.1.1 (2013-12-06)
 * Bugfix release.
 
