@@ -20,7 +20,7 @@ open Cmdliner
 (* wrapper for realpath(2) *)
 external realpath : string -> string = "unix_realpath"
 
-let binary = realpath Sys.argv.(0)
+let binary = Filename.basename Sys.argv.(0)
 
 let walker output mode dirs exts =
   let dirs = List.map realpath dirs in
