@@ -200,4 +200,4 @@ let output_lwt_skeleton_mli oc =
 include V1.KV_RO
   with type id = unit
    and type 'a io = 'a Lwt.t
-   and type page_aligned_stream = Cstruct.t Lwt_stream.t"
+   and type page_aligned_buffer = Cstruct.t"
