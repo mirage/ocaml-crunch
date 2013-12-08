@@ -27,6 +27,6 @@ opam install ${OPAM_PACKAGES}
 
 eval `opam config env`
 make
-make install
+sudo make install
 cd lib_test
 make
