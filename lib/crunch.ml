@@ -145,6 +145,8 @@ type 'a io = 'a Lwt.t
 
 type page_aligned_buffer = Cstruct.t
 
+let id () = ()
+ 
 let size () name =
   match Internal.size name with
   | None   -> return (`Error (Unknown_key name))
@@ -200,4 +202,5 @@ let output_lwt_skeleton_mli oc =
 include V1.KV_RO
   with type id = unit
    and type 'a io = 'a Lwt.t
-   and type page_aligned_buffer = Cstruct.t"
+   and type page_aligned_buffer = Cstruct.t
+   and type id = unit"
