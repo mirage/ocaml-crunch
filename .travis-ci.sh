@@ -1,5 +1,5 @@
 # OPAM packages needed to build tests.
-OPAM_PACKAGES="cmdliner"
+OPAM_PACKAGES="cmdliner cstruct"
 
 case "$OCAML_VERSION,$OPAM_VERSION" in
 3.12.1,1.0.0) ppa=avsm/ocaml312+opam10 ;;
@@ -30,4 +30,4 @@ make
 sudo make install
 cd lib_test
 make
-make test
+cd lib_test && make
