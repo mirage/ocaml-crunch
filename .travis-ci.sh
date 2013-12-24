@@ -30,3 +30,4 @@ make
 sudo make install
 cd lib_test
 make
+make test
