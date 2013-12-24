@@ -1,3 +1,6 @@
+1.2.3 (2013-12-24):
+* Fix compilation of 0-length files.
+
 1.2.2 (2013-12-08):
 * Use the `V1.KV_RO` signature from mirage-types>=0.5.0
 * Add Travis CI scripts.

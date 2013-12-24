@@ -63,6 +63,6 @@ let () =
   let info =
     let doc = "Convert a directory structure into a standalone OCaml module that can serve the file contents without requiring an external filesystem to be present." in
     let man = [ `S "BUGS"; `P "Email bug reports to <mirage-devel@lists.xenproject.org>."] in
-    Term.info "ocaml-crunch" ~version:"1.2.2" ~doc ~man
+    Term.info "ocaml-crunch" ~version:"1.2.3" ~doc ~man
   in
   match Term.eval (cmd_t, info) with `Ok x -> x | _ -> exit 1
