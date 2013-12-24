@@ -97,8 +97,9 @@ let output_file oc root name =
   (* Split the file as a series of chunks, of size up to 4096 (to simulate reading sectors) *)
   let sec = 4096 in (* sector size *)
   let rec consume idx =
-    if idx = size then fprintf oc "]\n"; (* EOF *)
-    if idx+sec < size then begin
+    if idx = size then 
+      fprintf oc "]\n" (* EOF *)
+    else if idx+sec < size then begin
       fprintf oc "\"%s\";\n" (String.escaped (String.sub s idx sec));
       consume (idx+sec);
     end else begin (* final chunk, short *)
