@@ -17,17 +17,14 @@
 
 (** Expose the contents of a directory as a static filesystem. *)
 
-val output_header: out_channel -> string -> unit
-(** [output_header oc binary_name] generates the header file. *)
-
 val output_generated_by: out_channel -> string -> unit
 (** [output_generated_by oc binary_name] generate a comments saying
     who generates that file. *)
 
-val output_file: out_channel -> string -> string -> unit
-(** [output_file oc root file] outputs the contents of [file]. *)
+val scan_file: string -> string -> unit
+(** [scan_file root file] records the contents of [root]/[file]. *)
 
-val output_footer: out_channel -> unit
+val output_implementation: out_channel -> unit
 (** Output the footer. *)
 
 val output_lwt_skeleton_ml: out_channel -> unit

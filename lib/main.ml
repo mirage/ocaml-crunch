@@ -30,9 +30,9 @@ let walker output mode dirs exts =
       Printf.printf "Generating %s\n%!" f;
       open_out f in
   let cwd = Sys.getcwd () in
-  Crunch.output_header oc binary;
-  List.iter (Crunch.walk_directory_tree exts (Crunch.output_file oc)) dirs;
-  Crunch.output_footer oc;
+  List.iter (Crunch.walk_directory_tree exts Crunch.scan_file) dirs;
+  Crunch.output_generated_by oc binary;
+  Crunch.output_implementation oc;
   begin match mode with
     | `Lwt   -> Crunch.output_lwt_skeleton_ml oc
     | `Plain -> Crunch.output_plain_skeleton_ml oc
@@ -63,6 +63,6 @@ let () =
   let info =
     let doc = "Convert a directory structure into a standalone OCaml module that can serve the file contents without requiring an external filesystem to be present." in
     let man = [ `S "BUGS"; `P "Email bug reports to <mirage-devel@lists.xenproject.org>."] in
-    Term.info "ocaml-crunch" ~version:"1.2.3" ~doc ~man
+    Term.info "ocaml-crunch" ~version:"1.3.0" ~doc ~man
   in
   match Term.eval (cmd_t, info) with `Ok x -> x | _ -> exit 1

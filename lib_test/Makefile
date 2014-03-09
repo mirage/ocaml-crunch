@@ -1,5 +1,5 @@
 CRUNCH = ../main.native
-PKGS   = cstruct,lwt,mirage-types,io-page-unix
+PKGS   = cstruct,lwt,mirage-types,io-page.unix
 
 all:
 	$(CRUNCH) t1 -o t1.ml

@@ -1,5 +1,5 @@
 # OPAM packages needed to build tests.
-OPAM_PACKAGES="cmdliner cstruct lwt mirage-types io-page-unix"
+OPAM_PACKAGES="cmdliner cstruct lwt mirage-types io-page"
 
 case "$OCAML_VERSION,$OPAM_VERSION" in
 3.12.1,1.0.0) ppa=avsm/ocaml312+opam10 ;;
@@ -13,7 +13,7 @@ esac
 
 echo "yes" | sudo add-apt-repository ppa:$ppa
 sudo apt-get update -qq
-sudo apt-get install -qq ocaml ocaml-native-compilers camlp4-extra opam
+sudo apt-get install -qq ocaml ocaml-native-compilers camlp4-extra opam libssl-dev
 export OPAMYES=1
 export OPAMVERBOSE=1
 echo OCaml version
@@ -27,6 +27,5 @@ opam install ${OPAM_PACKAGES}
 
 eval `opam config env`
 make
-sudo make install
-cd lib_test
-make
+opam pin crunch .
+env MODE=xen opam install mirage-www
