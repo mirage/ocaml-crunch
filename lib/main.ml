@@ -30,9 +30,9 @@ let walker output mode dirs exts =
       Printf.printf "Generating %s\n%!" f;
       open_out f in
   let cwd = Sys.getcwd () in
-  Crunch.output_header oc binary;
-  List.iter (Crunch.walk_directory_tree exts (Crunch.output_file oc)) dirs;
-  Crunch.output_footer oc;
+  List.iter (Crunch.walk_directory_tree exts Crunch.scan_file) dirs;
+  Crunch.output_generated_by oc binary;
+  Crunch.output_implementation oc;
   begin match mode with
     | `Lwt   -> Crunch.output_lwt_skeleton_ml oc
     | `Plain -> Crunch.output_plain_skeleton_ml oc

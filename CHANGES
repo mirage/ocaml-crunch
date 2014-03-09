@@ -1,3 +1,7 @@
+1.3.0 (2014-03-08):
+* Deduplicate file chunks so that only one copy of each
+  sector is allocated in the static module.
+
 1.2.3 (2013-12-24):
 * Fix compilation of 0-length files.
 
