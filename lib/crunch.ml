@@ -220,4 +220,5 @@ include V1.KV_RO
   with type id = unit
    and type 'a io = 'a Lwt.t
    and type page_aligned_buffer = Cstruct.t
-   and type id = unit"
+   and type id = unit
+val connect : unit -> [`Ok of t | `Error of error] io"
