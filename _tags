@@ -1,8 +1,9 @@
 # OASIS_START
-# DO NOT EDIT (digest: c01efe0e0f311a888fada032bdf52869)
-# Ignore VCS directories, you can use the same kind of rule outside 
-# OASIS_START/STOP if you want to exclude directories that contains 
+# DO NOT EDIT (digest: 551bbb004e68ab6fb7dc279093de0e6e)
+# Ignore VCS directories, you can use the same kind of rule outside
+# OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
+true: annot, bin_annot
 <**/.svn>: -traverse
 <**/.svn>: not_hygienic
 ".bzr": -traverse
@@ -17,14 +18,14 @@
 "lib/crunch.cmxs": use_crunch
 # Executable ocaml-crunch
 <lib/main.{native,byte}>: use_libocaml-crunch_stubs
-<lib/main.{native,byte}>: use_crunch
-<lib/main.{native,byte}>: pkg_unix
 <lib/main.{native,byte}>: pkg_cmdliner
-<lib/*.ml{,i}>: use_crunch
-<lib/*.ml{,i}>: pkg_unix
-<lib/*.ml{,i}>: pkg_cmdliner
-"lib/custom_unix_stubs.c": use_crunch
-"lib/custom_unix_stubs.c": pkg_unix
+<lib/main.{native,byte}>: pkg_unix
+<lib/main.{native,byte}>: use_crunch
+<lib/*.ml{,i,y}>: pkg_cmdliner
+<lib/*.ml{,i,y}>: pkg_unix
+<lib/*.ml{,i,y}>: use_crunch
 "lib/custom_unix_stubs.c": pkg_cmdliner
+"lib/custom_unix_stubs.c": pkg_unix
+"lib/custom_unix_stubs.c": use_crunch
 <lib/main.{native,byte}>: custom
 # OASIS_STOP
