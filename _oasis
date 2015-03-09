@@ -1,10 +1,10 @@
-OASISFormat: 0.3
+OASISFormat: 0.4
 Name:        crunch
-Version:     1.1.0
+Version:     1.4.0
 Synopsis:    Compile static files into a static filesystem
 Authors:     Anil Madhavapeddy, Thomas Gazagnaire
 License:     ISC
-Plugins:     META (0.3), DevFiles (0.3)
+Plugins:     META (0.4), DevFiles (0.4)
 BuildTools:  ocamlbuild
 
 Library crunch
