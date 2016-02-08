@@ -1,3 +1,7 @@
+1.4.1 (2016-02-08)
+* Use a poor-man `realpath` instead of relying on C bindings which are not
+  available under Cygwin
+
 1.4.0 (2015-03-09):
 * Add an explicit `connect` function to the signature of generated code. (#13)
 * Use centralised Travis CI scripts.
