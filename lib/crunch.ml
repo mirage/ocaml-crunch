@@ -217,8 +217,6 @@ let disconnect () = return_unit
 let output_lwt_skeleton_mli oc =
   fprintf oc "
 include V1.KV_RO
-  with type id = unit
-   and type 'a io = 'a Lwt.t
+  with type 'a io = 'a Lwt.t
    and type page_aligned_buffer = Cstruct.t
-   and type id = unit
 val connect : unit -> [`Ok of t | `Error of error] io"
