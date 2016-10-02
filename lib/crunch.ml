@@ -155,6 +155,7 @@ type t = unit
 
 type error =
   | Unknown_key of string
+  | Failure of string
 
 type id = unit
 
@@ -168,6 +169,11 @@ let size () name =
   match Internal.size name with
   | None   -> return (`Error (Unknown_key name))
   | Some s -> return (`Ok s)
+
+let mem () name =
+  match Internal.size name with
+  | None -> return (`Ok false)
+  | Some _ -> return (`Ok true)
 
 let filter_blocks offset len blocks =
   List.rev (fst (List.fold_left (fun (acc, (offset, offset', len)) c ->
