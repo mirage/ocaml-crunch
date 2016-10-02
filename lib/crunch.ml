@@ -213,9 +213,7 @@ let read () name offset len =
     ) (filter_blocks offset len c) in
     return (`Ok bufs)
 
-let return_ok = return (`Ok ())
-
-let connect () = return_ok
+let connect () = return_unit
 
 let disconnect () = return_unit
 "
@@ -225,4 +223,4 @@ let output_lwt_skeleton_mli oc =
 include V1.KV_RO
   with type 'a io = 'a Lwt.t
    and type page_aligned_buffer = Cstruct.t
-val connect : unit -> [`Ok of t | `Error of error] io"
+val connect : unit -> t io"
