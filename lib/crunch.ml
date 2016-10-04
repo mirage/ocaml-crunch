@@ -103,7 +103,7 @@ let scan_file root name =
   (* Split the file as a series of chunks, of size up to 4096 (to simulate reading sectors) *)
   let sec = 4096 in (* sector size *)
   let rec consume idx =
-    if idx = size then 
+    if idx = size then
       () (* EOF *)
     else if idx+sec < size then begin
       calc_chunk (String.sub s idx sec);
@@ -157,14 +157,10 @@ type error =
   | Unknown_key of string
   | Failure of string
 
-type id = unit
-
 type 'a io = 'a Lwt.t
 
 type page_aligned_buffer = Cstruct.t
 
-let id () = ()
- 
 let size () name =
   match Internal.size name with
   | None   -> return (`Error (Unknown_key name))
