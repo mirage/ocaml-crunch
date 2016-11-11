@@ -4,3 +4,4 @@ lib_test/t1.*
 setup.bin
 setup.log
 setup.data
+crunch.install

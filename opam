@@ -7,17 +7,21 @@ license:      "ISC"
 dev-repo:     "https://github.com/mirage/ocaml-crunch.git"
 tags:         ["org:mirage" "org:xapi-project"]
 
-build: [
-  ["ocaml" "setup.ml" "-configure" "--prefix" prefix]
-  ["ocaml" "setup.ml" "-build"]
-]
-install: ["ocaml" "setup.ml" "-install"]
-remove: [
-  ["rm" "-f" "%{bin}%/ocaml-crunch"]
-  ["ocamlfind" "remove" "crunch"]
-]
 depends: [
-  "ocamlfind"
   "cmdliner"
+  "ocamlfind" {build & test}
   "ocamlbuild" {build}
+  "topkg" {build}
+  "bos" {test}
+  "cstruct" {test}
+  "lwt" {test}
+  "mirage-types" {test}
+  "mirage-types-lwt" {test}
+  "io-page" {test}
+]
+
+build: [ "ocaml" "pkg/pkg.ml" "build" "--pinned" "%{pinned}%" "--tests" "false" ]
+build-test: [
+  [ "ocaml" "pkg/pkg.ml" "build" "--pinned" "%{pinned}%" "--tests" "true" ]
+  [ "ocaml" "pkg/pkg.ml" "test" ]
 ]
