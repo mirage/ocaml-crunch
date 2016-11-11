@@ -1,35 +1,36 @@
 open Bos
 open Printf
+open Result
 
 let compile file pkgs =
   Cmd.(v "ocamlbuild" % "-use-ocamlfind" % "-tag" % "thread" % "-pkgs" % pkgs % (file ^ ".native"))
   |> OS.Cmd.run_out |> OS.Cmd.to_string ~trim:true |>
-    function | Result.Ok r -> prerr_endline r; r | Result.Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
+    function | Ok r -> prerr_endline r; r | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
 
 let create_dir dir =
   Fpath.v (dir) |> OS.Dir.create ~path:true |>
-    function | Result.Ok r -> r | Result.Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
+    function | Ok r -> r | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
 
 let copy_files target orig =
   (OS.Dir.contents ~rel:true ~dotfiles:false (Fpath.v orig) |>
-     function | Result.Ok l -> l | Result.Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e)))
+     function | Ok l -> l | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e)))
   |> List.iter (fun file ->
          OS.Cmd.run_out Cmd.(v "cp"  % sprintf "%s/%s" orig (Fpath.filename file) % target ) |> OS.Cmd.to_string ~trim:true |>
-           function | Result.Ok _ -> () | Result.Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
+           function | Ok _ -> () | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
        )
 
 let crunch dir =
   Cmd.(v "./main.native" % dir % "-o" % (dir ^ ".ml"))
   |> OS.Cmd.run_out |> OS.Cmd.to_string ~trim:true |>
-    function | Result.Ok r -> prerr_endline r; r | Result.Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
+    function | Ok r -> prerr_endline r; r | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
 
 let prepare dest orig =
   OS.Dir.delete ~recurse:true (Fpath.v dest)
   |> function
-    | Result.Ok r ->
+    | Ok r ->
        let _ = create_dir dest in
        List.iter (copy_files dest) orig
-    | Result.Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
+    | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
 
 let () =
   let build_dir = "_build/_tests" in
@@ -48,5 +49,5 @@ let () =
   (* check that the compiled consumer exits successfully *)
   let _ = Cmd.v ("./consumer.native")
           |> OS.Cmd.run_out |> OS.Cmd.to_string ~trim:true |>
-            function | Result.Ok _ -> () | Result.Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e)) in
+            function | Ok _ -> () | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e)) in
   ()
