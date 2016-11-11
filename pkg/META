@@ -1,4 +1,4 @@
-version = "1.4.1"
+version = "%%VERSION_NUM%%"
 description = "Compile static files into a static filesystem"
 requires = "unix"
 archive(byte) = "crunch.cma"

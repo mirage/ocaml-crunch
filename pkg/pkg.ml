@@ -4,7 +4,8 @@
 open Topkg
 
 let () =
-  Pkg.describe "crunch" @@ fun c ->
+  let opams = [ Pkg.opam_file "opam" ~lint_deps_excluding:(Some ["mirage-types-lwt"]) ] in
+  Pkg.describe ~opams "crunch" @@ fun c ->
   Ok [ Pkg.mllib "lib/crunch.mllib";
        Pkg.bin "lib/main" ~dst:"ocaml-crunch";
        Pkg.test "test/test" ]
