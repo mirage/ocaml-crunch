@@ -9,7 +9,7 @@ tags:         ["org:mirage" "org:xapi-project"]
 
 depends: [
   "cmdliner"
-  "ocamlfind" {build}
+  "ocamlfind" {build & test}
   "ocamlbuild" {build}
   "topkg" {build}
   "bos" {test}
