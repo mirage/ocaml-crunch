@@ -1,3 +1,11 @@
+## 2.0.0
+
+* Port to MirageOS3 API: removed unused `id` type (#17), add Failure
+  error type (#20), `connect` does not return a result anymore.
+* Generate a `mem` function for the filesystem (#18)
+* Port to topkg and respect the odig packaging convention (#24 via @fgimenez)
+* Add `LICENSE` file to repository (#19 via @djs55)
+
 ## 1.4.1 (2016-02-08)
 
 * Use a poor-man `realpath` instead of relying on C bindings which are not
