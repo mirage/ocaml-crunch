@@ -153,9 +153,7 @@ open Lwt
 
 type t = unit
 
-type error =
-  | Unknown_key of string
-  | Failure of string
+type error = V1.Kv_ro.error
 
 type 'a io = 'a Lwt.t
 
@@ -163,43 +161,44 @@ type page_aligned_buffer = Cstruct.t
 
 let size () name =
   match Internal.size name with
-  | None   -> return (`Error (Unknown_key name))
-  | Some s -> return (`Ok s)
+  | None   -> return (Error `Unknown_key)
+  | Some s -> return (Ok s)
 
 let mem () name =
   match Internal.size name with
-  | None -> return (`Ok false)
-  | Some _ -> return (`Ok true)
+  | None -> return (Ok false)
+  | Some _ -> return (Ok true)
 
 let filter_blocks offset len blocks =
   List.rev (fst (List.fold_left (fun (acc, (offset, offset', len)) c ->
-    let len' = String.length c in
+    let sub64 c x y = String.sub c (Int64.to_int x) (Int64.to_int y) in
+    let len' = Int64.of_int @@ String.length c in
     let acc, consumed =
-      if len = 0
-      then acc, 0
+      if len = 0L
+      then acc, 0L
       (* This is before the requested data *)
-      else if offset' + len' < offset
-      then acc, 0
+      else if (Int64.add offset len) < offset
+      then acc, 0L
       (* This is after the requested data *)
-      else if offset + len < offset'
-      then acc, 0
+      else if (Int64.add offset len) < offset'
+      then acc, 0L
       (* Overlapping: we're inside the region but extend beyond it *)
-      else if offset <= offset' && (offset' + len') >= (offset + len)
-      then String.sub c (offset' - offset) len :: acc, len
+      else if offset <= offset' && (Int64.add offset' len') >= (Int64.add offset len)
+      then sub64 c (Int64.sub offset' offset) len :: acc, len
       (* Overlapping: we're outside the region but extend into it *)
       else if offset' <= offset
-      then String.sub c (offset - offset') (len' - offset + offset') :: acc, (len' - offset + offset')
+      then sub64 c (Int64.sub offset offset') Int64.(sub len' (add offset offset')) :: acc, Int64.(sub len' (add offset offset'))
       (* We're completely inside the region *)
       else c :: acc, len' in
-    let offset' = offset' + len' in
-    let offset = offset + consumed in
-    let len = len - consumed in
+    let offset' = Int64.add offset' len' in
+    let offset = Int64.add offset consumed in
+    let len = Int64.sub len consumed in
     acc, (offset, offset', len)
-  ) ([], (offset, 0, len)) blocks))
+  ) ([], (offset, 0L, len)) blocks))
 
 let read () name offset len =
   match Internal.file_chunks name with
-  | None   -> return (`Error (Unknown_key name))
+  | None   -> return (Error `Unknown_key)
   | Some c ->
     let bufs = List.map (fun buf ->
       let pg = Io_page.to_cstruct (Io_page.get 1) in
@@ -207,7 +206,7 @@ let read () name offset len =
       Cstruct.blit_from_string buf 0 pg 0 len;
       Cstruct.sub pg 0 len
     ) (filter_blocks offset len c) in
-    return (`Ok bufs)
+    return (Ok bufs)
 
 let connect () = return_unit
 
