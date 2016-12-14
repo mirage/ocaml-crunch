@@ -15,11 +15,10 @@ depends: [
   "bos" {test}
   "cstruct" {test}
   "lwt" {test}
-  "mirage-types" {test}
-  "mirage-types-lwt" {test}
+  "mirage-types" {test & >= "3.0.0"}
+  "mirage-types-lwt" {test & >= "3.0.0"}
   "io-page" {test}
 ]
-
 build: [ "ocaml" "pkg/pkg.ml" "build" "--pinned" "%{pinned}%" "--tests" "false" ]
 build-test: [
   [ "ocaml" "pkg/pkg.ml" "build" "--pinned" "%{pinned}%" "--tests" "true" ]
