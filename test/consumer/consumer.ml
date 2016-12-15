@@ -8,15 +8,15 @@ let () =
   let _ =
     T1.connect()
     >>= fun src ->
-    T1.read src "a" 0 4096
+    T1.read src "a" 0L 4096L
     >>= function
-    | `Ok s ->
+    | Ok s ->
        string_of_stream s
        >>= fun res ->
        if res = "foo\n" then
          Lwt.return_unit
        else
          raise (Failure (Printf.sprintf "unexpected read value, expecting foo, read: %s" res))
-    | `Error a -> raise (Failure "error")
+    | Error a -> raise (Failure "error")
   in
   ()
