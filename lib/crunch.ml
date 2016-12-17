@@ -187,7 +187,9 @@ let filter_blocks offset len blocks =
       then sub64 c (Int64.sub offset' offset) len :: acc, len
       (* Overlapping: we're outside the region but extend into it *)
       else if offset' <= offset
-      then sub64 c (Int64.sub offset offset') Int64.(sub len' (add offset offset')) :: acc, Int64.(sub len' (add offset offset'))
+      then
+        let l = Int64.(add (sub len' offset) offset') in
+        sub64 c (Int64.sub offset offset') l :: acc, l
       (* We're completely inside the region *)
       else c :: acc, len' in
     let offset' = Int64.add offset' len' in
