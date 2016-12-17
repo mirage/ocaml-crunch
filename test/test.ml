@@ -1,6 +1,5 @@
 open Bos
 open Printf
-open Result
 open Rresult
 
 let compile file pkgs =
