@@ -1,6 +1,6 @@
 version = "%%VERSION_NUM%%"
 description = "Compile static files into a static filesystem"
-requires = "unix"
+requires = "unix cmdliner"
 archive(byte) = "crunch.cma"
 plugin(byte) = "crunch.cma"
 archive(native) = "crunch.cmxa"

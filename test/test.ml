@@ -1,53 +1,41 @@
 open Bos
 open Printf
 open Result
+open Rresult
 
 let compile file pkgs =
-  Cmd.(v "ocamlbuild" % "-use-ocamlfind" % "-tag" % "thread" % "-pkgs" % pkgs % (file ^ ".native"))
-  |> OS.Cmd.run_out |> OS.Cmd.to_string ~trim:true |>
-    function | Ok r -> prerr_endline r; r | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
-
-let create_dir dir =
-  Fpath.v (dir) |> OS.Dir.create ~path:true |>
-    function | Ok r -> r | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
+  OS.Cmd.run (Cmd.(v "ocamlbuild" % "-use-ocamlfind" % "-classic-display" % "-tag" % "thread" % "-pkgs" % pkgs % (file ^ ".native")))
 
 let copy_files target orig =
-  (OS.Dir.contents ~rel:true ~dotfiles:false (Fpath.v orig) |>
-     function | Ok l -> l | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e)))
-  |> List.iter (fun file ->
-         OS.Cmd.run_out Cmd.(v "cp"  % sprintf "%s/%s" orig (Fpath.filename file) % target ) |> OS.Cmd.to_string ~trim:true |>
-           function | Ok _ -> () | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
-       )
+  OS.Dir.contents ~rel:true ~dotfiles:false (Fpath.v orig) >>= fun files ->
+  List.fold_left (fun r file ->
+      r >>= fun () -> OS.Cmd.run Cmd.(v "cp" % sprintf "%s/%s" orig (Fpath.filename file) % target ))
+    (R.ok ())
+    files
 
 let crunch dir =
-  Cmd.(v "./main.native" % dir % "-o" % (dir ^ ".ml"))
-  |> OS.Cmd.run_out |> OS.Cmd.to_string ~trim:true |>
-    function | Ok r -> prerr_endline r; r | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
+  OS.Cmd.run Cmd.(v "./main.native" % dir % "-o" % (dir ^ ".ml"))
 
 let prepare dest orig =
-  OS.Dir.delete ~recurse:true (Fpath.v dest)
-  |> function
-    | Ok r ->
-       let _ = create_dir dest in
-       List.iter (copy_files dest) orig
-    | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e))
+  OS.Dir.delete ~recurse:true (Fpath.v dest) >>= fun () ->
+  OS.Dir.create ~path:true (Fpath.v dest) >>= fun _ ->
+  List.fold_left (fun r o -> r >>= fun () -> copy_files dest o) (R.ok ()) orig
 
 let () =
   let build_dir = "_build/_tests" in
   let test_files_dir = sprintf "%s/t1" build_dir in
 
-  (* move files to _build dir *)
-  let _ = prepare build_dir ["lib"; "test/consumer"] in
-  let _ = prepare test_files_dir ["test/t1"] in
+  Rresult.R.error_msg_to_invalid_arg (
 
-  (* compile main binary, crunch and compile consumer for crunched files *)
-  let _ = OS.Dir.set_current (Fpath.v build_dir) in
-  let _ = compile "main" "cmdliner" in
-  let _ = crunch "t1" in
-  let _ = compile "consumer" "cstruct,lwt,mirage-types,io-page.unix,io-page" in
+    (* move files to _build dir *)
+    prepare build_dir ["lib"; "test/consumer"] >>= fun () ->
+    prepare test_files_dir ["test/t1"] >>= fun () ->
 
-  (* check that the compiled consumer exits successfully *)
-  let _ = Cmd.v ("./consumer.native")
-          |> OS.Cmd.run_out |> OS.Cmd.to_string ~trim:true |>
-            function | Ok _ -> () | Error (`Msg e) -> raise (Failure (sprintf "Error: %s" e)) in
-  ()
+    (* compile main binary, crunch and compile consumer for crunched files *)
+    OS.Dir.set_current (Fpath.v build_dir) >>= fun () ->
+    compile "main" "cmdliner" >>= fun () ->
+    crunch "t1" >>= fun () ->
+    compile "consumer" "cstruct,lwt,lwt.unix,mirage-types,io-page.unix,io-page" >>= fun () ->
+
+    (* check that the compiled consumer exits successfully *)
+    OS.Cmd.run (Cmd.v ("./consumer.native")))
