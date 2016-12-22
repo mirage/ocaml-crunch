@@ -155,13 +155,15 @@ type t = unit
 
 type error = V1.Kv_ro.error
 
+let pp_error = Mirage_pp.pp_kv_ro_error
+
 type 'a io = 'a Lwt.t
 
 type page_aligned_buffer = Cstruct.t
 
 let size () name =
   match Internal.size name with
-  | None   -> return (Error `Unknown_key)
+  | None   -> return (Error (`Unknown_key name))
   | Some s -> return (Ok s)
 
 let mem () name =
@@ -200,7 +202,7 @@ let filter_blocks offset len blocks =
 
 let read () name offset len =
   match Internal.file_chunks name with
-  | None   -> return (Error `Unknown_key)
+  | None   -> return (Error (`Unknown_key name))
   | Some c ->
     let bufs = List.map (fun buf ->
       let pg = Io_page.to_cstruct (Io_page.get 1) in

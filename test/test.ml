@@ -34,7 +34,9 @@ let () =
     OS.Dir.set_current (Fpath.v build_dir) >>= fun () ->
     compile "main" "cmdliner" >>= fun () ->
     crunch "t1" >>= fun () ->
-    compile "consumer" "cstruct,lwt,lwt.unix,mirage-types,io-page.unix,io-page" >>= fun () ->
+    compile "consumer"
+      "cstruct,lwt,lwt.unix,mirage-types,io-page.unix,io-page,mirage-runtime"
+    >>= fun () ->
 
     (* check that the compiled consumer exits successfully *)
     OS.Cmd.run (Cmd.v ("./consumer.native")))
