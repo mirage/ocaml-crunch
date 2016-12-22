@@ -27,7 +27,7 @@ let () =
   Rresult.R.error_msg_to_invalid_arg (
 
     (* move files to _build dir *)
-    prepare build_dir ["lib"; "test/consumer"] >>= fun () ->
+    prepare build_dir ["src"; "test/consumer"] >>= fun () ->
     prepare test_files_dir ["test/t1"] >>= fun () ->
 
     (* compile main binary, crunch and compile consumer for crunched files *)
