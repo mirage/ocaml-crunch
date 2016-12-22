@@ -18,6 +18,7 @@ depends: [
   "lwt" {test}
   "mirage-types" {test & >= "3.0.0"}
   "mirage-types-lwt" {test & >= "3.0.0"}
+  "mirage-runtime" {test}
   "io-page" {test}
   "rresult" {test}
 ]
