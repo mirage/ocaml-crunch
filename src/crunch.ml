@@ -90,7 +90,7 @@ let scan_file root name =
   let s = Buffer.contents buf in
   close_in fin;
   let rev_chunks = ref [] in
-  let calc_chunk b = 
+  let calc_chunk b =
     let digest = Digest.to_hex (Digest.string b) in
     rev_chunks := digest :: !rev_chunks;
     if Hashtbl.mem chunk_info digest then begin
