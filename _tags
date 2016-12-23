@@ -1,4 +1,4 @@
 true: annot, bin_annot
-<lib/**>: package(cmdliner unix)
+<src/**>: package(cmdliner unix)
 
 <test/*>: package(bos cstruct lwt io-page io-page.unix mirage-types rresult)

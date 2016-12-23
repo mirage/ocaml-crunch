@@ -27,14 +27,16 @@ let () =
   Rresult.R.error_msg_to_invalid_arg (
 
     (* move files to _build dir *)
-    prepare build_dir ["lib"; "test/consumer"] >>= fun () ->
+    prepare build_dir ["src"; "test/consumer"] >>= fun () ->
     prepare test_files_dir ["test/t1"] >>= fun () ->
 
     (* compile main binary, crunch and compile consumer for crunched files *)
     OS.Dir.set_current (Fpath.v build_dir) >>= fun () ->
     compile "main" "cmdliner" >>= fun () ->
     crunch "t1" >>= fun () ->
-    compile "consumer" "cstruct,lwt,lwt.unix,mirage-types,io-page.unix,io-page" >>= fun () ->
+    compile "consumer"
+      "cstruct,lwt,lwt.unix,mirage-types,io-page.unix,io-page,mirage-runtime"
+    >>= fun () ->
 
     (* check that the compiled consumer exits successfully *)
     OS.Cmd.run (Cmd.v ("./consumer.native")))
