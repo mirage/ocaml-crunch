@@ -34,8 +34,7 @@ let () =
     OS.Dir.set_current (Fpath.v build_dir) >>= fun () ->
     compile "main" "cmdliner" >>= fun () ->
     crunch "t1" >>= fun () ->
-    compile "consumer"
-      "cstruct,lwt,lwt.unix,mirage-types,io-page.unix,io-page,mirage-runtime"
+    compile "consumer" "cstruct,lwt,lwt.unix,mirage-kv-lwt,io-page.unix,io-page"
     >>= fun () ->
 
     (* check that the compiled consumer exits successfully *)
