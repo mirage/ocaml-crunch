@@ -154,9 +154,9 @@ open Result
 
 type t = unit
 
-type error = V1.Kv_ro.error
+type error = Mirage_kv.error
 
-let pp_error = Mirage_pp.pp_kv_ro_error
+let pp_error = Mirage_kv.pp_error
 
 type 'a io = 'a Lwt.t
 
@@ -220,7 +220,5 @@ let disconnect () = return_unit
 
 let output_lwt_skeleton_mli oc =
   fprintf oc "
-include V1.KV_RO
-  with type 'a io = 'a Lwt.t
-   and type page_aligned_buffer = Cstruct.t
-val connect : unit -> t io"
+include Mirage_kv_lwt.RO
+val connect : unit -> t Lwt.t"

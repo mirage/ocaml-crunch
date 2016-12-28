@@ -16,9 +16,7 @@ depends: [
   "bos" {test}
   "cstruct" {test}
   "lwt" {test}
-  "mirage-types" {test & >= "3.0.0"}
-  "mirage-types-lwt" {test & >= "3.0.0"}
-  "mirage-runtime" {test}
+  "mirage-kv-lwt" {test}
   "io-page" {test}
   "rresult" {test}
 ]
