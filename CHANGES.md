@@ -1,5 +1,6 @@
 ## 2.0.0
 
+* Fix reading of files consisting of multiple pages (#30 by @hannesm)
 * Port to MirageOS3 API: removed unused `id` type (#17), add Failure
   error type (#20), `connect` does not return a result anymore.
 * Generate a `mem` function for the filesystem (#18)
