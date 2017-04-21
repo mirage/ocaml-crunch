@@ -27,16 +27,16 @@
 
 ## 1.2.2 (2013-12-08)
 
-* Use the `V1.KV_RO` signature from mirage-types>=0.5.0
+* Use the `Mirage_types.KV_RO` signature from mirage-types>=0.5.0
 * Add Travis CI scripts.
 
 ## 1.2.1 (2013-12-08)
 
-* Generate the correct signature for `V1.KV_RO`.
+* Generate the correct signature for `Mirage_types.KV_RO`.
 
 ## 1.2.0 (2013-12-08)
 
-* Use the `V1.KV_RO` signature from mirage-types>=0.3.0
+* Use the `Mirage_types.KV_RO` signature from mirage-types>=0.3.0
 
 ## 1.1.2 (2013-12-07)
 
