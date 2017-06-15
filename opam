@@ -10,7 +10,7 @@ available:     [ ocaml-version >= "4.03.0" ]
 
 depends: [
   "cmdliner"
-  "ocamlfind" {build & test}
+  "ocamlfind" {build}
   "ocamlbuild" {build}
   "topkg" {build}
   "bos" {test}
