@@ -2,7 +2,7 @@
 
 (rule
  ((targets (t1.ml))
-  (deps (t1/a t1/b t1/c t1/d))
+  (deps ((files_recursively_in t1)))
   (action (run ${bin:ocaml-crunch} t1 -o ${@}))))
 
 (executable
