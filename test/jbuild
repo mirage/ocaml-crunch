@@ -1,13 +1,21 @@
 (jbuild_version 1)
 
 (rule
- ((targets (t1.ml))
+ ((targets (t1.ml t1.mli))
   (deps ((files_recursively_in t1)))
-  (action (run ${bin:ocaml-crunch} t1 -o ${@}))))
+  (action (run ${bin:ocaml-crunch} t1 -o t1.ml))))
 
 (executable
  ((name consumer)
-  (libraries (lwt io-page io-page.unix bos cstruct mirage-kwt-lwt rresult))
+  (libraries
+   (lwt.unix
+   io-page-unix
+   mirage-kv
+   mirage-kv-lwt
+   lwt
+   bos
+   cstruct
+   rresult))
   (modules (t1 consumer))))
 
 (alias

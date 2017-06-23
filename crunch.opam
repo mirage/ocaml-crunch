@@ -15,7 +15,7 @@ depends: [
   "cstruct" {test}
   "lwt" {test}
   "mirage-kv-lwt" {test & >= "1.0.0"}
-  "io-page" {test}
+  "io-page-unix" {test}
   "rresult" {test}
 ]
 build: [
