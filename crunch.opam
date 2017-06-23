@@ -10,18 +10,14 @@ available:     [ ocaml-version >= "4.03.0" ]
 
 depends: [
   "cmdliner"
-  "ocamlfind" {build & test}
-  "ocamlbuild" {build}
-  "topkg" {build}
-  "bos" {test}
+  "jbuilder" {build & >= "1.0+beta10"}
   "cstruct" {test}
   "lwt" {test}
   "mirage-kv-lwt" {test & >= "1.0.0"}
-  "io-page" {test}
-  "rresult" {test}
+  "io-page-unix" {test}
 ]
-build: [ "ocaml" "pkg/pkg.ml" "build" "--pinned" "%{pinned}%" "--tests" "false" ]
-build-test: [
-  [ "ocaml" "pkg/pkg.ml" "build" "--pinned" "%{pinned}%" "--tests" "true" ]
-  [ "ocaml" "pkg/pkg.ml" "test" ]
+build: [
+  ["jbuilder" "subst" "-n" name] {pinned}
+  ["jbuilder" "build" "-p" name "-j" jobs]
 ]
+build-test: [["jbuilder" "runtest" "-p" name "-j" jobs]]

@@ -1,8 +1,0 @@
-version = "%%VERSION_NUM%%"
-description = "Compile static files into a static filesystem"
-requires = "unix cmdliner"
-archive(byte) = "crunch.cma"
-plugin(byte) = "crunch.cma"
-archive(native) = "crunch.cmxa"
-plugin(native) = "crunch.cmxs"
-exists_if = "crunch.cma"

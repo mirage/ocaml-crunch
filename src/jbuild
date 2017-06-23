@@ -1,0 +1,15 @@
+(jbuild_version 1)
+
+(library
+ ((name crunch)
+  (wrapped false)
+  (synopsis "Compile static files into a static filesystem")
+  (modules (crunch))
+  (public_name crunch)
+  (libraries (unix))))
+
+(executable
+ ((name main)
+  (modules (main))
+  (public_name ocaml-crunch)
+  (libraries (cmdliner crunch))))
