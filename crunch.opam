@@ -10,7 +10,7 @@ available:     [ ocaml-version >= "4.03.0" ]
 
 depends: [
   "cmdliner"
-  "jbuilder" {build}
+  "jbuilder" {build & >= "1.0+beta10"}
   "bos" {test}
   "cstruct" {test}
   "lwt" {test}
