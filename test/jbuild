@@ -13,9 +13,7 @@
    mirage-kv
    mirage-kv-lwt
    lwt
-   bos
-   cstruct
-   rresult))
+   cstruct))
   (modules (t1 consumer))))
 
 (alias

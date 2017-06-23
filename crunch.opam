@@ -11,12 +11,10 @@ available:     [ ocaml-version >= "4.03.0" ]
 depends: [
   "cmdliner"
   "jbuilder" {build & >= "1.0+beta10"}
-  "bos" {test}
   "cstruct" {test}
   "lwt" {test}
   "mirage-kv-lwt" {test & >= "1.0.0"}
   "io-page-unix" {test}
-  "rresult" {test}
 ]
 build: [
   ["jbuilder" "subst" "-n" name] {pinned}
