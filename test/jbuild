@@ -9,11 +9,11 @@
  ((name consumer)
   (libraries
    (lwt.unix
-   io-page-unix
-   mirage-kv
-   mirage-kv-lwt
-   lwt
-   cstruct))
+    io-page-unix
+    mirage-kv
+    mirage-kv-lwt
+    lwt
+    cstruct))
   (modules (t1 consumer))))
 
 (alias
