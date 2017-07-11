@@ -1,7 +1,4 @@
 _build/
-lib_test/t1.*
-*.native
-setup.bin
-setup.log
-setup.data
-crunch.install
+.merlin
+*.install
+*.swp
