@@ -1,3 +1,5 @@
+## ocaml-crunch -- convert a filesystem into a static OCaml module
+
 `ocaml-crunch` takes a directory of files and compiles them into a standalone
 OCaml module which serves the contents directly from memory.  This can be
 convenient for libraries that need a few embedded files (such as a web server)
