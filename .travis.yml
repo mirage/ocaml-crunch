@@ -7,10 +7,6 @@ sudo: false
 env:
  global:
    - PACKAGE="crunch"
-   - PRE_INSTALL_HOOK="cd /home/opam/opam-repository && git pull origin master && opam update -u -y"
  matrix:
-   - DISTRO=debian-unstable OCAML_VERSION=4.03.0
-   - DISTRO=ubuntu-12.04 OCAML_VERSION=4.03.0
-   - DISTRO=ubuntu-16.04 OCAML_VERSION=4.04.2
-   - DISTRO=centos-7 OCAML_VERSION=4.03.0
    - DISTRO=alpine OCAML_VERSION=4.04.2
+   - DISTRO=alpine OCAML_VERSION=4.06.0
