@@ -150,7 +150,6 @@ let read name =
 let output_lwt_skeleton_ml oc =
   fprintf oc "
 open Lwt
-open Result
 
 type t = unit
 
