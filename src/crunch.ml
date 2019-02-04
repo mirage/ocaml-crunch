@@ -59,7 +59,6 @@ let walk_directory_tree exts walkfn root_dir =
   Unix.chdir root_dir;
   walk "."
 
-open Arg
 open Printf
 
 let chunk_info = Hashtbl.create 1
@@ -127,9 +126,6 @@ let output_implementation oc =
   ) file_info;
   fprintf oc " | _ -> None\n";
   fprintf oc "\n";
-  fprintf oc "let file_list = [";
-  Hashtbl.iter (fun k _ ->  fprintf oc "\"%s\"; " (String.escaped k)) file_info;
-  fprintf oc " ]\n";
   fprintf oc "let size = function\n";
   Hashtbl.iter (fun name (_,size) ->
       fprintf oc " |\"%s\" |\"/%s\" -> Some %dL\n" (String.escaped name) (String.escaped name) size
@@ -139,7 +135,6 @@ let output_implementation oc =
 
 let output_plain_skeleton_ml oc =
   output_string oc "
-let file_list = Internal.file_list
 let size name = Internal.size name
 
 let read name =
