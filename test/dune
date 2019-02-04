@@ -1,0 +1,18 @@
+(rule
+ (targets t1.ml t1.mli)
+ (deps
+  (source_tree t1))
+ (action
+  (run %{bin:ocaml-crunch} t1 -o t1.ml)))
+
+(executable
+ (name consumer)
+ (libraries lwt.unix io-page-unix mirage-kv mirage-kv-lwt lwt cstruct)
+ (modules t1 consumer))
+
+(alias
+ (name runtest)
+ (deps
+  (:< consumer.exe))
+ (action
+  (run %{<})))
