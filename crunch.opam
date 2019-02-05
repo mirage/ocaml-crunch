@@ -3,6 +3,7 @@ maintainer:   "anil@recoil.org"
 authors:      ["Anil Madhavapeddy" "Thomas Gazagnaire"]
 homepage:     "https://github.com/mirage/ocaml-crunch"
 bug-reports:  "https://github.com/mirage/ocaml-crunch/issues"
+doc:          "https://mirage.github.io/ocaml-crunch/"
 license:      "ISC"
 dev-repo:     "git+https://github.com/mirage/ocaml-crunch.git"
 tags:         ["org:mirage" "org:xapi-project"]
