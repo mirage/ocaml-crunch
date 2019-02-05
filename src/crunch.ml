@@ -59,7 +59,6 @@ let walk_directory_tree exts walkfn root_dir =
   Unix.chdir root_dir;
   walk "."
 
-open Arg
 open Printf
 
 let chunk_info = Hashtbl.create 1
