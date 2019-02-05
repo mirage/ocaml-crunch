@@ -22,3 +22,9 @@ build: [
   ["dune" "runtest" "-p" name "-j" jobs] {with-test}
 ]
 synopsis: "Convert a filesystem into a static OCaml module"
+description: """
+`ocaml-crunch` takes a directory of files and compiles them into a standalone
+OCaml module which serves the contents directly from memory.  This can be
+convenient for libraries that need a few embedded files (such as a web server)
+and do not want to deal with all the trouble of file configuration.
+"""
