@@ -65,7 +65,11 @@ let chunk_info = Hashtbl.create 1
 let file_info = Hashtbl.create 1
 
 let output_generated_by oc binary =
-  let t = Unix.gettimeofday () in
+  let t =
+    try
+      float_of_string (Sys.getenv "SOURCE_DATE_EPOCH")
+    with Not_found ->
+      Unix.gettimeofday () in
   let months = [| "Jan"; "Feb"; "Mar"; "Apr"; "May"; "Jun";
                   "Jul"; "Aug"; "Sep"; "Oct"; "Nov"; "Dec" |] in
   let days = [| "Sun"; "Mon"; "Tue"; "Wed"; "Thu"; "Fri"; "Sat" |] in
