@@ -1,3 +1,8 @@
+## v2.2.0 (2019-02-05)
+* Port to dune from jbuilder (#46 @hannesm)
+* use `SOURCE_DATE_EPOCH` instead of gettimeofday if set to
+  support reproducible builds (#45 @xclerc)
+
 ## v2.1.0 2017-06-24
 
 * Port to Jbuilder and simplify test dependencies (#38 by @rgrinberg)
