@@ -9,12 +9,12 @@ dev-repo:     "git+https://github.com/mirage/ocaml-crunch.git"
 tags:         ["org:mirage" "org:xapi-project"]
 
 depends: [
-  "ocaml" {>= "4.04.2"}
+  "ocaml" {>= "4.05.0"}
   "cmdliner"
   "ptime"
   "dune" {build & >= "1.0"}
   "lwt" {with-test}
-  "mirage-kv-lwt" {with-test & >= "1.0.0"}
+  "mirage-kv-lwt" {with-test & >= "2.0.0"}
   "mirage-kv-mem" {with-test}
 ]
 build: [
