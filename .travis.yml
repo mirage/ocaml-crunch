@@ -6,7 +6,6 @@ services:
 sudo: false
 env:
  global:
-   - PINS="mirage-kv-mem.dev:https://github.com/mirage/mirage-kv-mem.git"
    - PACKAGE="crunch"
  matrix:
    - DISTRO=alpine OCAML_VERSION=4.05
