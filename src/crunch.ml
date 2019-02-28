@@ -64,12 +64,14 @@ open Printf
 let chunk_info = Hashtbl.create 1
 let file_info = Hashtbl.create 1
 
+let now () =
+  try
+    float_of_string (Sys.getenv "SOURCE_DATE_EPOCH")
+  with Not_found ->
+    Unix.gettimeofday ()
+
 let output_generated_by oc binary =
-  let t =
-    try
-      float_of_string (Sys.getenv "SOURCE_DATE_EPOCH")
-    with Not_found ->
-      Unix.gettimeofday () in
+  let t = now () in
   let months = [| "Jan"; "Feb"; "Mar"; "Apr"; "May"; "Jun";
                   "Jul"; "Aug"; "Sep"; "Oct"; "Nov"; "Dec" |] in
   let days = [| "Sun"; "Mon"; "Tue"; "Wed"; "Thu"; "Fri"; "Sat" |] in
@@ -116,14 +118,14 @@ let scan_file root name =
     end
   in
   consume 0;
-  Hashtbl.add file_info name ((List.rev !rev_chunks),size)
+  Hashtbl.add file_info name (List.rev !rev_chunks)
 
 let output_implementation oc =
   fprintf oc "module Internal = struct\n";
   Hashtbl.iter (fprintf oc "let d_%s = %S\n") chunk_info;
   fprintf oc "\n";
   fprintf oc "let file_chunks = function\n";
-  Hashtbl.iter (fun name (chunks,_) ->
+  Hashtbl.iter (fun name chunks ->
     fprintf oc " | \"%s\" | \"/%s\" -> Some [" (String.escaped name) (String.escaped name);
     List.iter (fprintf oc "  d_%s; ") chunks;
     fprintf oc "  ]\n";
@@ -133,17 +135,11 @@ let output_implementation oc =
   fprintf oc "let file_list = [";
   Hashtbl.iter (fun k _ ->  fprintf oc "\"%s\"; " (String.escaped k)) file_info;
   fprintf oc " ]\n";
-  fprintf oc "let size = function\n";
-  Hashtbl.iter (fun name (_,size) ->
-      fprintf oc " |\"%s\" |\"/%s\" -> Some %dL\n" (String.escaped name) (String.escaped name) size
-    ) file_info;
-  fprintf oc " |_ -> None\n\n";
   fprintf oc "end\n\n"
 
 let output_plain_skeleton_ml oc =
   output_string oc "
 let file_list = Internal.file_list
-let size name = Internal.size name
 
 let read name =
   match Internal.file_chunks name with
@@ -151,74 +147,40 @@ let read name =
   | Some c -> Some (String.concat \"\" c)"
 
 let output_lwt_skeleton_ml oc =
+  let (days, ps) =
+    Ptime.Span.to_d_ps @@
+    Ptime.to_span (match Ptime.of_float_s (now ()) with None -> assert false | Some x -> x)
+  in
   fprintf oc "
 open Lwt
 
-type t = unit
+module C = struct
+  type 'a io = 'a Lwt.t
+  type t = unit
+  let disconnect () = Lwt.return_unit
+  let now_d_ps () = (%d, %LdL)
+  let current_tz_offset_s () = None
+  let period_d_ps () = None
+end
 
-type error = Mirage_kv.error
+include Mirage_kv_mem.Make(C)
 
-let pp_error = Mirage_kv.pp_error
-
-type 'a io = 'a Lwt.t
-
-type page_aligned_buffer = Cstruct.t
-
-let size () name =
-  match Internal.size name with
-  | None   -> return (Error (`Unknown_key name))
-  | Some s -> return (Ok s)
-
-let mem () name =
-  match Internal.size name with
-  | None -> return (Ok false)
-  | Some _ -> return (Ok true)
-
-let filter_blocks offset len blocks =
-  List.rev (fst (List.fold_left (fun (acc, (offset, offset', len)) c ->
-    let sub64 c x y = String.sub c (Int64.to_int x) (Int64.to_int y) in
-    let len' = Int64.of_int @@ String.length c in
-    let acc, consumed =
-      if len = 0L
-      then acc, 0L
-      (* This is before the requested data *)
-      else if (Int64.add offset len) < offset
-      then acc, 0L
-      (* This is after the requested data *)
-      else if (Int64.add offset len) < offset'
-      then acc, 0L
-      (* Overlapping: we're inside the region but extend beyond it *)
-      else if offset <= offset' && (Int64.add offset' len') >= (Int64.add offset len)
-      then sub64 c (Int64.sub offset' offset) len :: acc, len
-      (* Overlapping: we're outside the region but extend into it *)
-      else if offset' <= offset
-      then
-        let l = Int64.(add (sub len' offset) offset') in
-        sub64 c (Int64.sub offset offset') l :: acc, l
-      (* We're completely inside the region *)
-      else c :: acc, len' in
-    let offset' = Int64.add offset' len' in
-    let offset = Int64.add offset consumed in
-    let len = Int64.sub len consumed in
-    acc, (offset, offset', len)
-  ) ([], (offset, 0L, len)) blocks))
-
-let read () name offset len =
+let file_content name =
   match Internal.file_chunks name with
-  | None   -> return (Error (`Unknown_key name))
-  | Some c ->
-    let bufs = List.map (fun buf ->
-      let pg = Io_page.to_cstruct (Io_page.get 1) in
-      let len = String.length buf in
-      Cstruct.blit_from_string buf 0 pg 0 len;
-      Cstruct.sub pg 0 len
-    ) (filter_blocks offset len c) in
-    return (Ok bufs)
+    | None -> Lwt.fail_with (\"expected file content, found no blocks \" ^ name)
+    | Some blocks -> Lwt.return (String.concat \"\" blocks)
 
-let connect () = return_unit
+let add store name =
+  file_content name >>= fun data ->
+  set store (Mirage_kv.Key.v name) data >>= function
+    | Ok () -> Lwt.return_unit
+    | Error e -> Lwt.fail_with (Fmt.to_to_string pp_write_error e)
 
-let disconnect () = return_unit
-"
+let connect () =
+  connect () >>= fun store ->
+  Lwt_list.iter_s (add store) Internal.file_list >|= fun () ->
+  store
+" days ps
 
 let output_lwt_skeleton_mli oc =
   fprintf oc "

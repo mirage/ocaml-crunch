@@ -4,7 +4,7 @@
  (synopsis "Compile static files into a static filesystem")
  (modules crunch)
  (public_name crunch)
- (libraries unix)
+ (libraries unix ptime)
  (flags :standard -safe-string))
 
 (executable

@@ -1,6 +1,6 @@
 opam-version: "2.0"
-maintainer:   "anil@recoil.org"
-authors:      ["Anil Madhavapeddy" "Thomas Gazagnaire"]
+maintainer:   "MirageOS team"
+authors:      ["Anil Madhavapeddy" "Thomas Gazagnaire" "Stefanie Schirmer" "Hannes Mehnert"]
 homepage:     "https://github.com/mirage/ocaml-crunch"
 bug-reports:  "https://github.com/mirage/ocaml-crunch/issues"
 doc:          "https://mirage.github.io/ocaml-crunch/"
@@ -9,13 +9,13 @@ dev-repo:     "git+https://github.com/mirage/ocaml-crunch.git"
 tags:         ["org:mirage" "org:xapi-project"]
 
 depends: [
-  "ocaml" {>= "4.04.2"}
+  "ocaml" {>= "4.05.0"}
   "cmdliner"
+  "ptime"
   "dune" {build & >= "1.0"}
-  "cstruct" {with-test}
   "lwt" {with-test}
-  "mirage-kv-lwt" {with-test & >= "1.0.0"}
-  "io-page-unix" {with-test}
+  "mirage-kv-lwt" {with-test & >= "2.0.0"}
+  "mirage-kv-mem" {with-test}
 ]
 build: [
   ["dune" "subst"] {pinned}
