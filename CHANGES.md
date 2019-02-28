@@ -1,8 +1,8 @@
-## v3.0.0 (2019-02-27)
+## v3.0.0 (2019-02-28)
 
 * Implement the mirage-kv 2.0.0 interface, using mirage-kv-mem
   (#15 @linse @hannesm)
-* Removed no longer used size function
+* Removed no longer used size function (#15 @linse @hannesm)
 
 ## v2.2.0 (2019-02-05)
 
