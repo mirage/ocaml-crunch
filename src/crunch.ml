@@ -50,7 +50,7 @@ let walk_directory_tree exts walkfn root_dir =
               walkfn root_dir (String.sub n 2 (String.length n - 2))
             in
             match get_extension ~file:f with
-            | None -> traverse ()
+            | None -> if exts = [] then traverse () else ()
             | Some e when filter_ext e -> traverse ()
             | Some _ -> ()
           end
