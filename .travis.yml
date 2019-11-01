@@ -9,7 +9,6 @@ env:
    - PACKAGE="crunch"
    - DISTRO=alpine
    - TESTS=true
-   - PINS="mirage-kv-mem:git+https://github.com/hannesm/mirage-kv-mem.git#easy"
  matrix:
    - OCAML_VERSION=4.05 TESTS=false
    - OCAML_VERSION=4.06

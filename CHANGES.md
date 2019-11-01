@@ -1,3 +1,7 @@
+## v3.1.0 (2019-11-01)
+
+* Adapt mirage-kv 3.0.0 interface (#50 @hannesm)
+
 ## v3.0.0 (2019-02-28)
 
 * Implement the mirage-kv 2.0.0 interface, using mirage-kv-mem
