@@ -7,7 +7,7 @@
 
 (executable
  (name consumer)
- (libraries lwt.unix mirage-kv mirage-kv-lwt lwt mirage-kv-mem)
+ (libraries lwt.unix mirage-kv lwt mirage-kv-mem)
  (modules t1 consumer))
 
 (alias

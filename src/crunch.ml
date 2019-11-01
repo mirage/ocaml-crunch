@@ -155,9 +155,6 @@ let output_lwt_skeleton_ml oc =
 open Lwt
 
 module C = struct
-  type 'a io = 'a Lwt.t
-  type t = unit
-  let disconnect () = Lwt.return_unit
   let now_d_ps () = (%d, %LdL)
   let current_tz_offset_s () = None
   let period_d_ps () = None
@@ -184,5 +181,5 @@ let connect () =
 
 let output_lwt_skeleton_mli oc =
   fprintf oc "
-include Mirage_kv_lwt.RO
+include Mirage_kv.RO
 val connect : unit -> t Lwt.t"

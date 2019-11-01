@@ -14,7 +14,7 @@ depends: [
   "ptime"
   "dune" {>= "1.0"}
   "lwt" {with-test}
-  "mirage-kv-lwt" {with-test & >= "2.0.0"}
+  "mirage-kv" {with-test & >= "3.0.0"}
   "mirage-kv-mem" {with-test}
 ]
 build: [
