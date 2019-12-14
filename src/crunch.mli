@@ -17,14 +17,20 @@
 
 (** Expose the contents of a directory as a static filesystem. *)
 
+type t
+(** The type of a crunch. *)
+
+val make : unit -> t
+(** [make ()] is an empty crunch. *)
+
 val output_generated_by: out_channel -> string -> unit
 (** [output_generated_by oc binary_name] generate a comments saying
     who generates that file. *)
 
-val scan_file: string -> string -> unit
-(** [scan_file root file] records the contents of [root]/[file]. *)
+val scan_file: t -> string -> string -> t
+(** [scan_file t root file] records the contents of [root]/[file] in [t]. *)
 
-val output_implementation: out_channel -> unit
+val output_implementation: t -> out_channel -> unit
 (** Output the footer. *)
 
 val output_lwt_skeleton_ml: out_channel -> unit
@@ -36,7 +42,8 @@ val output_lwt_skeleton_mli: out_channel -> unit
 val output_plain_skeleton_ml: out_channel -> unit
 (** Output a simple skeleton. *)
 
-val walk_directory_tree: string list -> (string -> string -> unit) -> string -> unit
-(** [walk extensions fn root_dir] traverses all the directory
+val walk_directory_tree: t -> string list -> (t -> string -> string -> t) ->
+  string -> t
+(** [walk t extensions fn root_dir] traverses all the directory
     structure starting from [root_dir] and keeping only the [extensions]
     provided (or do not filter anything if the list is empty). *)
