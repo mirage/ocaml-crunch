@@ -1,3 +1,12 @@
+## v3.2.0 (2019-12-14)
+
+* Make crunch reproducible: use a Map.Make(String) instead of Hashtbl.
+  Iterating over the former is guaranteed to be sorted over the keys.
+  (#51 @hannesm)
+* The state (Map.t) is passed explicit to `scan_file`, `output_implementation`
+  and `walk_directory_tree`. The value `empty` is provided to construct an
+  empty `t`. (#51 @hannesm)
+
 ## v3.1.0 (2019-11-01)
 
 * Adapt mirage-kv 3.0.0 interface (#50 @hannesm)
@@ -5,8 +14,8 @@
 ## v3.0.0 (2019-02-28)
 
 * Implement the mirage-kv 2.0.0 interface, using mirage-kv-mem
-  (#15 @linse @hannesm)
-* Removed no longer used size function (#15 @linse @hannesm)
+  (#47 @linse @hannesm)
+* Removed no longer used size function (#47 @linse @hannesm)
 
 ## v2.2.0 (2019-02-05)
 
