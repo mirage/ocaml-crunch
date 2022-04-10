@@ -82,7 +82,7 @@ let scan_file (chunk_info, file_info) root name =
   let full_name = Filename.concat root name in
   let stats = Unix.stat full_name in
   let size = stats.Unix.st_size in
-  let fin = open_in full_name in
+  let fin = open_in_bin full_name in
   let buf = Buffer.create size in
   Buffer.add_channel buf fin size;
   let s = Buffer.contents buf in

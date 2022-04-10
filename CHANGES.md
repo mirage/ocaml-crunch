@@ -1,3 +1,8 @@
+## Pending
+
+* Open files in binary mode so buffers don't underread on Windows.
+  (@jonahbeckford)
+
 ## v3.2.0 (2019-12-14)
 
 * Make crunch reproducible: use a Map.Make(String) instead of Hashtbl.
