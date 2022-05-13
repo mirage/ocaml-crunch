@@ -70,6 +70,11 @@ let walker output mode dirs exts =
 
 open Cmdliner
 
+let version =
+  match Build_info.V1.version () with
+  | None -> "n/a"
+  | Some v -> Build_info.V1.Version.to_string v
+
 let () =
   let dirs = Arg.(non_empty & pos_all dir [] & info [] ~docv:"DIRECTORIES"
     ~doc:"Directories to recursively walk and crunch.") in
@@ -84,6 +89,6 @@ let () =
   let info =
     let doc = "Convert a directory structure into a standalone OCaml module that can serve the file contents without requiring an external filesystem to be present." in
     let man = [ `S "BUGS"; `P "Email bug reports to <mirage-devel@lists.xenproject.org>."] in
-    Cmd.info "ocaml-crunch" ~version:"2.1.0" ~doc ~man
+    Cmd.info "ocaml-crunch" ~version ~doc ~man
   in
   exit @@ Cmd.eval (Cmd.v info cmd_t)

@@ -11,5 +11,5 @@
  (name main)
  (modules main)
  (public_name ocaml-crunch)
- (libraries cmdliner crunch)
+ (libraries cmdliner crunch dune-build-info)
  (flags :standard -safe-string))
