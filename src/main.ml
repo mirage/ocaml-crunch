@@ -15,8 +15,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-open Cmdliner
-
 (* poor-man reimplementation of realpath, from OPAM's system library *)
 let realpath p =
   let getchdir s =
@@ -70,19 +68,22 @@ let walker output mode dirs exts =
   | Some _ -> Printf.printf "Skipping generation of .mli\n%!"
   | None   -> ()
 
+open Cmdliner
+
 let () =
   let dirs = Arg.(non_empty & pos_all dir [] & info [] ~docv:"DIRECTORIES"
     ~doc:"Directories to recursively walk and crunch.") in
   let output = Arg.(value & opt (some string) None & info ["o";"output"] ~docv:"OUTPUT"
     ~doc:"Output file for the OCaml module.") in
-  let mode = Arg.(value & opt (enum ["lwt",`Lwt; "plain",`Plain]) `Lwt & info ["m";"mode"] ~docv:"MODE"
-    ~doc:"Interface access mode: 'lwt' or 'plain'. 'lwt' is the default.") in
+  let modes = ["lwt",`Lwt; "plain",`Plain] in
+  let mode = Arg.(value & opt (enum modes) `Lwt & info ["m";"mode"] ~docv:"MODE"
+    ~doc:(Printf.sprintf "Interface access mode: %s. $(b,lwt) is the default." (Arg.doc_alts_enum modes))) in
   let exts = Arg.(value & opt_all string [] & info ["e";"ext"] ~docv:"VALID EXTENSION"
     ~doc:"If specified, only these extensions will be included in the crunched output. If not specified, then all files will be crunched into the output module.") in
-  let cmd_t = Term.(pure walker $ output $ mode $ dirs $ exts) in
+  let cmd_t = Term.(const walker $ output $ mode $ dirs $ exts) in
   let info =
     let doc = "Convert a directory structure into a standalone OCaml module that can serve the file contents without requiring an external filesystem to be present." in
     let man = [ `S "BUGS"; `P "Email bug reports to <mirage-devel@lists.xenproject.org>."] in
-    Term.info "ocaml-crunch" ~version:"2.1.0" ~doc ~man
+    Cmd.info "ocaml-crunch" ~version:"2.1.0" ~doc ~man
   in
-  match Term.eval (cmd_t, info) with `Ok x -> x | _ -> exit 1
+  exit @@ Cmd.eval (Cmd.v info cmd_t)
