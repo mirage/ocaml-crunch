@@ -5,14 +5,7 @@
  (action
   (run %{bin:ocaml-crunch} t1 -o t1.ml)))
 
-(executable
+(test
  (name consumer)
  (libraries lwt.unix mirage-kv lwt mirage-kv-mem)
  (modules t1 consumer))
-
-(alias
- (name runtest)
- (deps
-  (:< consumer.exe))
- (action
-  (run %{<})))
