@@ -69,7 +69,8 @@ let () =
   let cmd_t = Term.(const walker $ output $ mode $ dirs $ exts) in
   let info =
     let doc = "Convert a directory structure into a standalone OCaml module that can serve the file contents without requiring an external filesystem to be present." in
+    let envs = [Cmd.Env.info ~doc:"Specifies the last modification of crunched files for reproducible output." "SOURCE_DATE_EPOCH"] in
     let man = [ `S "BUGS"; `P "Email bug reports to <mirage-devel@lists.xenproject.org>."] in
-    Cmd.info "ocaml-crunch" ~version ~doc ~man
+    Cmd.info "ocaml-crunch" ~version ~doc ~man ~envs
   in
   exit @@ Cmd.eval (Cmd.v info cmd_t)
