@@ -2,6 +2,7 @@
 
 * Open files in binary mode so buffers don't underread on Windows.
   (@jonahbeckford)
+* Always use Unix-style paths for path keys (#?? @MisterDA)
 
 ## v3.2.0 (2019-12-14)
 

@@ -21,6 +21,19 @@ type t = string SM.t * string list SM.t
 
 let make () = SM.empty, SM.empty
 
+module Filename = struct
+  include Filename
+
+  (* Always use Unix-style filenames for keys *)
+  let dir_sep = "/"
+  let is_dir_sep s i = s.[i] = '/'
+  let concat dirname filename =
+    let l = String.length dirname in
+    if l = 0 || is_dir_sep dirname (l-1)
+    then dirname ^ filename
+    else dirname ^ dir_sep ^ filename
+end
+
 (* Walk directory and call walkfn on every file that matches extension ext *)
 let walk_directory_tree t exts walkfn root_dir =
   (* Recursive directory walker *)
