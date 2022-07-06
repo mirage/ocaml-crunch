@@ -15,7 +15,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-let binary = Filename.basename Sys.argv.(0)
+let binary = Sys.argv.(0) |> Filename.basename |> Filename.remove_extension
 
 let walker output mode dirs exts =
   let dirs = List.map Realpath.realpath dirs in
