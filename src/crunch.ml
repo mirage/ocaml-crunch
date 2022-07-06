@@ -21,14 +21,6 @@ type t = string SM.t * string list SM.t
 
 let make () = SM.empty, SM.empty
 
-(* Retrieve file extension , if any, or blank string otherwise *)
-let get_extension ~file =
-  let rec search_dot i =
-    if i < 1 || file.[i] = '/' then None
-    else if file.[i] = '.' then Some (String.sub file (i+1) (String.length file - i - 1))
-    else search_dot (i - 1) in
-  search_dot (String.length file - 1)
-
 (* Walk directory and call walkfn on every file that matches extension ext *)
 let walk_directory_tree t exts walkfn root_dir =
   (* Recursive directory walker *)
@@ -45,9 +37,9 @@ let walk_directory_tree t exts walkfn root_dir =
           else
             let name = String.sub n 2 (String.length n - 2) in
             (* If extension list is empty then let all through, otherwise white list *)
-            match exts, get_extension ~file:f with
+            match exts, Filename.extension f with
             | [], _ -> repeat (walkfn t root_dir name)
-            | exts, Some e when List.mem e exts -> repeat (walkfn t root_dir name)
+            | exts, e when e <> "" && List.mem e exts -> repeat (walkfn t root_dir name)
             | _ -> repeat t
     in
     let result = repeat t in
