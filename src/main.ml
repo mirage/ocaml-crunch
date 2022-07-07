@@ -17,13 +17,17 @@
 
 let binary = Sys.argv.(0) |> Filename.basename |> Filename.remove_extension
 
-let walker output mode dirs exts =
+let walker output mode dirs exts silent =
+  let log fmt =
+    if silent then Printf.ifprintf stdout fmt
+    else Printf.fprintf stdout (fmt ^^ "%!")
+  in
   let dirs = List.map Realpath.realpath dirs in
   let oc =
     match output with
     | None -> stdout
     | Some f ->
-        Printf.printf "Generating %s\n%!" f;
+        log "Generating %s\n" f;
         open_out_bin f
   in
   let cwd = Sys.getcwd () in
@@ -41,13 +45,13 @@ let walker output mode dirs exts =
   match output with
   | Some f when Filename.check_suffix f ".ml" && mode = `Lwt ->
       let mli = Filename.chop_extension f ^ ".mli" in
-      Printf.printf "Generating %s\n%!" mli;
+      log "Generating %s\n" mli;
       Sys.chdir cwd;
       let oc = open_out_bin mli in
       Crunch.output_generated_by oc binary;
       Crunch.output_lwt_skeleton_mli oc;
       close_out oc
-  | Some _ -> Printf.printf "Skipping generation of .mli\n%!"
+  | Some _ -> log "Skipping generation of .mli\n"
   | None -> ()
 
 open Cmdliner
@@ -86,7 +90,8 @@ let () =
              crunched output. If not specified, then all files will be \
              crunched into the output module.")
   in
-  let cmd_t = Term.(const walker $ output $ mode $ dirs $ exts) in
+  let quiet = Arg.(value & flag & info [ "s"; "silent" ] ~doc:"Silent mode.") in
+  let cmd_t = Term.(const walker $ output $ mode $ dirs $ exts $ quiet) in
   let info =
     let doc =
       "Convert a directory structure into a standalone OCaml module that can \
