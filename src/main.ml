@@ -15,34 +15,15 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-(* poor-man reimplementation of realpath, from OPAM's system library *)
-let realpath p =
-  let getchdir s =
-    let p = Sys.getcwd () in
-    Sys.chdir s;
-    p
-  in
-  let normalize s = getchdir (getchdir s) in
-  if Filename.is_relative p then
-    match (try Some (Sys.is_directory p) with Sys_error _ -> None) with
-    | None -> p
-    | Some true -> normalize p
-    | Some false ->
-      let dir = normalize (Filename.dirname p) in
-      match Filename.basename p with
-      | "."  -> dir
-      | base -> Filename.concat dir base
-  else p
-
-let binary = Filename.basename Sys.argv.(0)
+let binary = Sys.argv.(0) |> Filename.basename |> Filename.remove_extension
 
 let walker output mode dirs exts =
-  let dirs = List.map realpath dirs in
+  let dirs = List.map Realpath.realpath dirs in
   let oc = match output with
     | None   -> stdout
     | Some f ->
       Printf.printf "Generating %s\n%!" f;
-      open_out f in
+      open_out_bin f in
   let cwd = Sys.getcwd () in
   let t =
     List.fold_left
@@ -61,7 +42,7 @@ let walker output mode dirs exts =
     let mli = (Filename.chop_extension f) ^ ".mli" in
     Printf.printf "Generating %s\n%!" mli;
     Sys.chdir cwd;
-    let oc = open_out mli in
+    let oc = open_out_bin mli in
     Crunch.output_generated_by oc binary;
     Crunch.output_lwt_skeleton_mli oc;
     close_out oc
@@ -88,7 +69,8 @@ let () =
   let cmd_t = Term.(const walker $ output $ mode $ dirs $ exts) in
   let info =
     let doc = "Convert a directory structure into a standalone OCaml module that can serve the file contents without requiring an external filesystem to be present." in
+    let envs = [Cmd.Env.info ~doc:"Specifies the last modification of crunched files for reproducible output." "SOURCE_DATE_EPOCH"] in
     let man = [ `S "BUGS"; `P "Email bug reports to <mirage-devel@lists.xenproject.org>."] in
-    Cmd.info "ocaml-crunch" ~version ~doc ~man
+    Cmd.info "ocaml-crunch" ~version ~doc ~man ~envs
   in
   exit @@ Cmd.eval (Cmd.v info cmd_t)

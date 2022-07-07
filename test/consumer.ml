@@ -9,38 +9,38 @@ let size t1 key =
 
 let main =
   T1.connect() >>= fun src ->
-  (T1.get src (key "a") >>= function
+  (T1.get src (key "a") >|= function
     | Ok res ->
       if res = "foo\n" then
-        (print_endline "read a successfully" ; Lwt.return_unit)
+        print_endline "read a successfully"
       else
-        raise (Failure (Printf.sprintf "unexpected read value, expecting foo, read: %s" res))
-    | Error _ -> raise (Failure "error while reading 'a'")) >>= fun () ->
+        Fmt.failwith "unexpected read value, expecting foo, read: %s" res
+    | Error e -> Fmt.failwith "error while reading 'a': %a" T1.pp_error e) >>= fun () ->
   ( size src (key "c") >>= function
-      | Error _ -> raise (Failure "error while calling size on 'c'")
+      | Error _ -> Fmt.failwith "error while calling size on 'c'"
       | Ok l ->
         if l = 4100 then
-          T1.get src (key "c") >>= function
-          | Error _ -> raise (Failure "error while reading 'c'")
-          | Ok _ -> print_endline "read 'c' successfully" ; Lwt.return_unit
+          T1.get src (key "c") >|= function
+          | Error e -> Fmt.failwith "error while reading 'c': %a" T1.pp_error e
+          | Ok _ -> print_endline "read 'c' successfully"
         else
-          raise (Failure "invalid size while reading 'c'") ) >>= fun () ->
+          failwith "invalid size while reading 'c'" ) >>= fun () ->
   ( size src (key "d") >>= function
-      | Error _ -> raise (Failure "error while calling size on 'd'")
+      | Error e -> Fmt.failwith "error while calling size on 'd': %a" T1.pp_error e
       | Ok l ->
         if l = 12300 then
-          T1.get src (key "d") >>= function
-          | Error _ -> raise (Failure "error while reading 'd'")
-          | Ok _ -> print_endline "read 'd' successfully" ; Lwt.return_unit
+          T1.get src (key "d") >|= function
+          | Error e -> Fmt.failwith "error while reading 'd': %a" T1.pp_error e
+          | Ok _ -> print_endline "read 'd' successfully"
         else
-          raise (Failure "invalid size while reading 'd'") ) >>= fun () ->
-  T1.get src (key "e/f") >>= function
-  | Error _ -> raise (Failure "error while reading 'd'")
+          Fmt.failwith "invalid size while reading 'd'" ) >>= fun () ->
+  T1.get src (key "e/f") >|= function
+  | Error e -> Fmt.failwith "error while reading 'd': %a" T1.pp_error e
   | Ok data ->
     if data = "hallohallo\n" then
-      (print_endline "read e/f successfully" ; Lwt.return_unit)
+      print_endline "read e/f successfully"
     else
-      raise (Failure (Printf.sprintf "unexpected read value, expecting hallohallo, read: %s" data))
+      Fmt.failwith "unexpected read value, expecting hallohallo, read: %s" data
 
 let () =
   Lwt_main.run main
