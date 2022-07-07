@@ -23,7 +23,7 @@ let walker output mode dirs exts =
     | None   -> stdout
     | Some f ->
       Printf.printf "Generating %s\n%!" f;
-      open_out f in
+      open_out_bin f in
   let cwd = Sys.getcwd () in
   let t =
     List.fold_left
@@ -42,7 +42,7 @@ let walker output mode dirs exts =
     let mli = (Filename.chop_extension f) ^ ".mli" in
     Printf.printf "Generating %s\n%!" mli;
     Sys.chdir cwd;
-    let oc = open_out mli in
+    let oc = open_out_bin mli in
     Crunch.output_generated_by oc binary;
     Crunch.output_lwt_skeleton_mli oc;
     close_out oc
