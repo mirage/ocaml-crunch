@@ -40,7 +40,7 @@ let walker output mode dirs exts silent =
   Crunch.output_implementation t oc;
   (match mode with
   | `Lwt -> Crunch.output_lwt_skeleton_ml oc
-  | `Plain -> Crunch.output_plain_skeleton_ml oc);
+  | `Plain -> Crunch.output_plain_skeleton_ml t oc);
   close_out oc;
   match output with
   | Some f when Filename.check_suffix f ".ml" && mode = `Lwt ->
