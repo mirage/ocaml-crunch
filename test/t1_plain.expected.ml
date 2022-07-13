@@ -45,3 +45,11 @@ let hash = function
   | "d" | "/d" -> Some "410b329e18babf8919b0dda0faf97384"
   | "e/f" | "/e/f" -> Some "ca5e5972335360438e6605eab714cc1c"
   | _ -> None
+
+let size = function
+  | "a" | "/a" -> Some 4
+  | "b" | "/b" -> Some 4
+  | "c" | "/c" -> Some 4100
+  | "d" | "/d" -> Some 12300
+  | "e/f" | "/e/f" -> Some 11
+  | _ -> None

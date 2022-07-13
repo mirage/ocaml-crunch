@@ -17,7 +17,12 @@
 
 module SM = Map.Make (String)
 
-type file_info = { chunk_digests : string list; file_digest : string }
+type file_info = {
+  chunk_digests : string list;
+  file_digest : string;
+  size : int;
+}
+
 type t = string SM.t * file_info SM.t
 
 let make () = (SM.empty, SM.empty)
@@ -134,6 +139,7 @@ let scan_file (chunk_info, file_info) root name =
     {
       chunk_digests = List.rev !rev_chunks;
       file_digest = Digest.(to_hex (string s));
+      size = String.length s;
     }
   in
   (ci, SM.add name entry file_info)
@@ -172,6 +178,12 @@ let hash = function
     (fun name { file_digest; _ } ->
       pf "  | %S | \"/%s\" -> Some \"%s\"\n" name (String.escaped name)
         file_digest)
+    file_info;
+  pf "  | _ -> None\n\n";
+  pf "let size = function\n";
+  SM.iter
+    (fun name { size; _ } ->
+      pf "  | %S | \"/%s\" -> Some %d\n" name (String.escaped name) size)
     file_info;
   pf "  | _ -> None\n"
 
