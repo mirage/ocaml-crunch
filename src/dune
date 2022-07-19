@@ -18,10 +18,9 @@
  (name main)
  (modules main realpath)
  (public_name ocaml-crunch)
- (libraries cmdliner crunch dune-build-info
+ (libraries cmdliner crunch
   (select
    realpath.ml
    from
    (realpath -> realpath.pre_413.ml)
-   (-> realpath.unix.ml)))
- (flags :standard -safe-string))
+   (-> realpath.unix.ml))))
