@@ -18,7 +18,9 @@
  (name main)
  (modules main realpath)
  (public_name ocaml-crunch)
- (libraries cmdliner crunch
+ (libraries
+  cmdliner
+  crunch
   (select
    realpath.ml
    from
