@@ -1,10 +1,11 @@
-## Pending
+## v3.3.0 (2022-07-24)
 
 * Open files in binary mode so buffers don't underread on Windows.
-  (@jonahbeckford)
+  (#54, @jonahbeckford)
 * Always use Unix-style paths for path keys (#58, @MisterDA)
-* Add -s and --silent flags (#52, #60 @MisterDA)
+* Add -s and --silent flags (#52, #60, @MisterDA)
 * Add `hash` and `size` functions to the plain module (#53, #60, @MisterDA)
+* Update to cmdliner 1.1 (#55, @MisterDA)
 
 ## v3.2.0 (2019-12-14)
 
