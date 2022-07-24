@@ -17,7 +17,13 @@
 
 module SM = Map.Make (String)
 
-type t = string SM.t * string list SM.t
+type file_info = {
+  chunk_digests : string list;
+  file_digest : string;
+  size : int;
+}
+
+type t = string SM.t * file_info SM.t
 
 let make () = (SM.empty, SM.empty)
 
@@ -129,7 +135,14 @@ let scan_file (chunk_info, file_info) root name =
   in
   (* consume fills !rev_chunks as a side effect, so sequentialise this*)
   let ci = consume 0 chunk_info in
-  (ci, SM.add name (List.rev !rev_chunks) file_info)
+  let entry =
+    {
+      chunk_digests = List.rev !rev_chunks;
+      file_digest = Digest.(to_hex (string s));
+      size = String.length s;
+    }
+  in
+  (ci, SM.add name entry file_info)
 
 let output_implementation (chunk_info, file_info) oc =
   let pf fmt = Printf.fprintf oc fmt in
@@ -137,9 +150,9 @@ let output_implementation (chunk_info, file_info) oc =
   SM.iter (fun name chunk -> pf "  let d_%s = %S\n\n" name chunk) chunk_info;
   pf "  let file_chunks = function\n";
   SM.iter
-    (fun name chunks ->
+    (fun name { chunk_digests; _ } ->
       pf "    | %S | \"/%s\" -> Some [" name (String.escaped name);
-      List.iter (pf " d_%s;") chunks;
+      List.iter (pf " d_%s;") chunk_digests;
       pf " ]\n")
     file_info;
   pf "    | _ -> None\n\n";
@@ -148,8 +161,9 @@ let output_implementation (chunk_info, file_info) oc =
   pf "]\n";
   pf "end\n"
 
-let output_plain_skeleton_ml oc =
-  output_string oc
+let output_plain_skeleton_ml (_, file_info) oc =
+  let pf fmt = Printf.fprintf oc fmt in
+  pf
     {|
 let file_list = Internal.file_list
 
@@ -157,7 +171,21 @@ let read name =
   match Internal.file_chunks name with
   | None -> None
   | Some c -> Some (String.concat "" c)
-|}
+
+let hash = function
+|};
+  SM.iter
+    (fun name { file_digest; _ } ->
+      pf "  | %S | \"/%s\" -> Some \"%s\"\n" name (String.escaped name)
+        file_digest)
+    file_info;
+  pf "  | _ -> None\n\n";
+  pf "let size = function\n";
+  SM.iter
+    (fun name { size; _ } ->
+      pf "  | %S | \"/%s\" -> Some %d\n" name (String.escaped name) size)
+    file_info;
+  pf "  | _ -> None\n"
 
 let output_lwt_skeleton_ml oc =
   let days, ps =

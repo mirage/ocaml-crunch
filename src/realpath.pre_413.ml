@@ -7,10 +7,10 @@ let realpath p =
   in
   let normalize s = getchdir (getchdir s) in
   if Filename.is_relative p then
-    match try Some (Sys.is_directory p) with Sys_error _ -> None with
-    | None -> p
-    | Some true -> normalize p
-    | Some false -> (
+    match Sys.is_directory p with
+    | exception Sys_error _ -> p
+    | true -> normalize p
+    | false -> (
         let dir = normalize (Filename.dirname p) in
         match Filename.basename p with
         | "." -> dir

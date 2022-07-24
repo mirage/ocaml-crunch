@@ -33,6 +33,9 @@ OPTIONS
        -o OUTPUT, --output=OUTPUT
            Output file for the OCaml module.
 
+       -s, --silent
+           Silent mode.
+
 COMMON OPTIONS
        --help[=FMT] (default=auto)
            Show this help in format FMT. The value FMT must be one of auto,

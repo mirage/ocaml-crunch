@@ -37,3 +37,19 @@ let read name =
   match Internal.file_chunks name with
   | None -> None
   | Some c -> Some (String.concat "" c)
+
+let hash = function
+  | "a" | "/a" -> Some "d3b07384d113edec49eaa6238ad5ff00"
+  | "b" | "/b" -> Some "c157a79031e1c40f85931829bc5fc552"
+  | "c" | "/c" -> Some "82e32faa21d2c4c0586cb4dc786ff4f7"
+  | "d" | "/d" -> Some "410b329e18babf8919b0dda0faf97384"
+  | "e/f" | "/e/f" -> Some "ca5e5972335360438e6605eab714cc1c"
+  | _ -> None
+
+let size = function
+  | "a" | "/a" -> Some 4
+  | "b" | "/b" -> Some 4
+  | "c" | "/c" -> Some 4100
+  | "d" | "/d" -> Some 12300
+  | "e/f" | "/e/f" -> Some 11
+  | _ -> None
