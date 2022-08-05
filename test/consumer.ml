@@ -7,11 +7,11 @@ let size t1 key =
 
 let main =
   T1.connect () >>= fun src ->
-  (T1.get src (key "a") >|= function
+  (T1.get src (key "a.ext") >|= function
    | Ok res ->
-       if res = "foo\n" then print_endline "read a successfully"
+       if res = "foo\n" then print_endline "read a.ext successfully"
        else Fmt.failwith "unexpected read value, expecting foo, read: %s" res
-   | Error e -> Fmt.failwith "error while reading 'a': %a" T1.pp_error e)
+   | Error e -> Fmt.failwith "error while reading 'a.ext': %a" T1.pp_error e)
   >>= fun () ->
   (size src (key "c") >>= function
    | Error _ -> Fmt.failwith "error while calling size on 'c'"
