@@ -57,7 +57,9 @@ let walk_directory_tree t exts walkfn root_dir =
             (* If extension list is empty then let all through, otherwise white list *)
             match (exts, Filename.extension f) with
             | [], _ -> repeat (walkfn t root_dir name)
-            | exts, e when e <> "" && List.mem e exts ->
+            | exts, e
+              when e <> ""
+                   && List.mem (String.sub e 1 (String.length e - 1)) exts ->
                 repeat (walkfn t root_dir name)
             | _ -> repeat t)
     in
