@@ -1,3 +1,8 @@
+## unreleased
+
+* Fixed a regression in v3.3.0 where periods ('.') had to be specified
+  in the extention list. (#62, @MisterDA)
+
 ## v3.3.0 (2022-07-24)
 
 * Open files in binary mode so buffers don't underread on Windows.
