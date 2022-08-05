@@ -1,5 +1,5 @@
 (rule
- (targets t1.ml t1.mli t1_plain.ml)
+ (targets t1.ml t1.mli t1_plain.ml t1_plain_ext.ml)
  (deps
   (source_tree t1))
  (action
@@ -8,7 +8,8 @@
    0
    (progn
     (run %{bin:ocaml-crunch} --mode=lwt -o t1.ml t1)
-    (run %{bin:ocaml-crunch} --mode=plain -o t1_plain.ml t1)))))
+    (run %{bin:ocaml-crunch} --mode=plain -o t1_plain.ml t1)
+    (run %{bin:ocaml-crunch} --mode=plain -e ext -o t1_plain_ext.ml t1)))))
 
 (rule
  (alias runtest)
@@ -24,6 +25,11 @@
  (alias runtest)
  (action
   (diff t1_plain.expected.ml t1_plain.ml)))
+
+(rule
+ (alias runtest)
+ (action
+  (diff t1_plain_ext.expected.ml t1_plain_ext.ml)))
 
 (test
  (name consumer)
