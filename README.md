@@ -5,6 +5,25 @@ OCaml module which serves the contents directly from memory.  This can be
 convenient for libraries that need a few embedded files (such as a web server)
 and do not want to deal with all the trouble of file configuration.
 
+The generated module exports the following functions:
+
+```ocaml
+val file_list : string list
+(** [file_list] contains the list of the files stored in the crunched module. *)
+
+val read : string -> string option
+(** [read filename] optionally returns the contents of [filename],
+    if stored in the crunched module. *)
+
+val hash : string -> string option
+(** [hash filename] optionally returns the MD5 hash of [filename],
+    if stored in the crunched module. *)
+
+val size : string -> int option
+(** [size filename] optionally returns the size in bytes of [filename],
+    if stored in the crunched module.  *)
+```
+
 Run `ocaml-crunch --help` for more information:
 
 ```
