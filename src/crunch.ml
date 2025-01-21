@@ -201,13 +201,7 @@ let output_lwt_skeleton_ml oc =
     {|
 open Lwt
 
-module C = struct
-  let now_d_ps () = (%d, %LdL)
-  let current_tz_offset_s () = None
-  let period_d_ps () = None
-end
-
-include Mirage_kv_mem.Make (C)
+include Mirage_kv_mem
 
 let file_content name =
   match Internal.file_chunks name with
