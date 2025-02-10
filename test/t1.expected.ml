@@ -47,5 +47,5 @@ let add store name =
   | Error e -> Lwt.fail_with (Fmt.to_to_string pp_write_error e)
 
 let connect () =
-  connect () >>= fun store ->
+  connect ~now:(fun () -> Ptime.v (0, 0L)) () >>= fun store ->
   Lwt_list.iter_s (add store) Internal.file_list >|= fun () -> store
