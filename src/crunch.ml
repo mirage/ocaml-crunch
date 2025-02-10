@@ -190,6 +190,13 @@ let hash = function
   pf "  | _ -> None\n"
 
 let output_lwt_skeleton_ml oc =
+  let days, ps =
+    Ptime.Span.to_d_ps
+    @@ Ptime.to_span
+         (match Ptime.of_float_s (now ()) with
+         | None -> assert false
+         | Some x -> x)
+  in
   Printf.fprintf oc
     {|
 open Lwt
@@ -208,9 +215,9 @@ let add store name =
   | Error e -> Lwt.fail_with (Fmt.to_to_string pp_write_error e)
 
 let connect () =
-  connect () >>= fun store ->
+  connect ~now:(fun () -> Ptime.v (%d, %LdL)) () >>= fun store ->
   Lwt_list.iter_s (add store) Internal.file_list >|= fun () -> store
-|}
+|} days ps
 
 let output_lwt_skeleton_mli oc =
   Printf.fprintf oc {|include Mirage_kv.RO
