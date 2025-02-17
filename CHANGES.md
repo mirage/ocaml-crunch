@@ -1,3 +1,7 @@
+## v4.0.0 (2025-02-17)
+
+* Update to mirage-kv-mem 4.0.0 API changes (fewer functors) (#68 @hannesm)
+
 ## v3.3.1 (2022-08-05)
 
 * Fixed a regression in v3.3.0 where periods ('.') had to be specified
