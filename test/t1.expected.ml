@@ -33,13 +33,7 @@ end
 
 open Lwt
 
-module C = struct
-  let now_d_ps () = (0, 0L)
-  let current_tz_offset_s () = None
-  let period_d_ps () = None
-end
-
-include Mirage_kv_mem.Make (C)
+include Mirage_kv_mem
 
 let file_content name =
   match Internal.file_chunks name with
@@ -53,5 +47,5 @@ let add store name =
   | Error e -> Lwt.fail_with (Fmt.to_to_string pp_write_error e)
 
 let connect () =
-  connect () >>= fun store ->
+  connect ~now:(fun () -> Ptime.v (0, 0L)) () >>= fun store ->
   Lwt_list.iter_s (add store) Internal.file_list >|= fun () -> store
