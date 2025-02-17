@@ -217,7 +217,8 @@ let add store name =
 let connect () =
   connect ~now:(fun () -> Ptime.v (%d, %LdL)) () >>= fun store ->
   Lwt_list.iter_s (add store) Internal.file_list >|= fun () -> store
-|} days ps
+|}
+    days ps
 
 let output_lwt_skeleton_mli oc =
   Printf.fprintf oc {|include Mirage_kv.RO
