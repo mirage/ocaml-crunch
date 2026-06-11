@@ -1,15 +1,16 @@
 (rule
  (targets t1.ml t1.mli t1_plain.ml t1_plain_ext.ml)
  (deps
-  (source_tree t1))
+  (source_tree t1)
+  %{bin:ocaml-crunch})
  (action
   (setenv
    SOURCE_DATE_EPOCH
    0
    (progn
-    (run %{bin:ocaml-crunch} --mode=lwt -o t1.ml t1)
-    (run %{bin:ocaml-crunch} --mode=plain -o t1_plain.ml t1)
-    (run %{bin:ocaml-crunch} --mode=plain -e ext -o t1_plain_ext.ml t1)))))
+    (run ocaml-crunch --mode=lwt -o t1.ml t1)
+    (run ocaml-crunch --mode=plain -o t1_plain.ml t1)
+    (run ocaml-crunch --mode=plain -e ext -o t1_plain_ext.ml t1)))))
 
 (rule
  (alias runtest)
