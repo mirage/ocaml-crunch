@@ -51,3 +51,27 @@ val walk_directory_tree :
 (** [walk t extensions fn root_dir] traverses all the directory
     structure starting from [root_dir] and keeping only the [extensions]
     provided (or do not filter anything if the list is empty). *)
+
+val path_to_identifier : ?strip_ext:bool -> string -> string
+(** Mangle a path into an OCaml value identifier, lossily: ["css/app.css"] is
+    ["css__app_css"], and ["some/secret.age"] with [~strip_ext] is
+    ["some__secret"]. *)
+
+val check_module_name : string -> (unit, string) result
+(** [Error reason] if {!output_names_ml} cannot use that module name. *)
+
+type names
+(** The bindings {!output_names_ml} will emit, one per crunched file. *)
+
+val names : t -> module_name:string -> strip_ext:bool -> names
+(** Mangle every path, before any output is opened.
+
+    @raise Failure on an unusable module name or an identifier collision. *)
+
+val output_names_ml : names -> out_channel -> unit
+(** Output a module binding one value per crunched file, with [name], [path],
+    [contents], [size] and [all] accessors. Refers to the chunks of
+    {!output_implementation}, so must follow it. *)
+
+val output_names_mli : names -> out_channel -> unit
+(** The matching signature, for the modes that generate an [.mli]. *)

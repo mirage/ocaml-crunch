@@ -1,5 +1,6 @@
 (rule
- (targets t1.ml t1.mli t1_plain.ml t1_plain_ext.ml)
+ (targets t1.ml t1.mli t1_plain.ml t1_plain_ext.ml t1_names.ml
+   t1_names_strip.ml)
  (deps
   (source_tree t1))
  (action
@@ -9,7 +10,10 @@
    (progn
     (run %{bin:ocaml-crunch} --mode=lwt -o t1.ml t1)
     (run %{bin:ocaml-crunch} --mode=plain -o t1_plain.ml t1)
-    (run %{bin:ocaml-crunch} --mode=plain -e ext -o t1_plain_ext.ml t1)))))
+    (run %{bin:ocaml-crunch} --mode=plain -e ext -o t1_plain_ext.ml t1)
+    (run %{bin:ocaml-crunch} --mode=plain --names -o t1_names.ml t1)
+    (run %{bin:ocaml-crunch} --mode=plain --names --names-module=Directory
+      --names-strip-ext -o t1_names_strip.ml t1)))))
 
 (rule
  (alias runtest)
@@ -31,7 +35,22 @@
  (action
   (diff t1_plain_ext.expected.ml t1_plain_ext.ml)))
 
+(rule
+ (alias runtest)
+ (action
+  (diff t1_names.expected.ml t1_names.ml)))
+
+(rule
+ (alias runtest)
+ (action
+  (diff t1_names_strip.expected.ml t1_names_strip.ml)))
+
 (test
  (name consumer)
  (libraries lwt.unix mirage-kv lwt mirage-kv-mem)
  (modules t1 consumer))
+
+(test
+ (name names_consumer)
+ (libraries crunch)
+ (modules t1_names t1_names_strip names_consumer))
